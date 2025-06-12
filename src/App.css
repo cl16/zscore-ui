@@ -1,0 +1,42 @@
+.header-main {
+    margin: 0px;
+    border: 0px;
+    padding: 0px;
+    background-color: #2E2437;
+    color: #C4D85E;
+    height: 40px;
+    
+}
+
+.footer-main {
+    margin: 0px;
+    border: 0px;
+    padding: 0px;
+    background-color: #2E2437;
+    color: #C4D85E;
+    height: 20px;
+
+}
+
+.page-body-main {
+    flex: 1;
+    background-color: #232125;
+    font-family: 'Jetbrains Mono';
+    font-weight: 200;
+    color: #9DAA7C;
+}
+
+.navbar {
+    display: flex;
+    flex-direction: row;
+}
+
+.navbar-section {
+    padding: 10px;
+    font-family: 'JetBrains Mono';
+    font-weight: 100;
+    text-shadow: 1px 2px 5px black;
+    -webkit-text-stroke: 1px #1A0606;
+    paint-order: stroke fill;
+}
+
