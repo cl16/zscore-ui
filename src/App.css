@@ -40,3 +40,12 @@
     paint-order: stroke fill;
 }
 
+.navbar-section:hover {
+    background-color: #61526e;
+}
+
+#logo {
+    height: 20px;
+    width: 20px;
+}
+
