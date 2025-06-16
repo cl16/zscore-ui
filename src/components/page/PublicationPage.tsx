@@ -1,7 +1,11 @@
+import {useParams} from "react-router-dom";
+
 function PublicationPage() {
 
+    const { pubId } = useParams();
+
     return (
-        <div>This is the PublicationPage component...</div>
+        <div>This is the PublicationPage component with pubId: {pubId}</div>
     )
 }
 
