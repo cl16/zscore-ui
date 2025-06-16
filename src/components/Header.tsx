@@ -1,3 +1,5 @@
+import {Link} from "react-router-dom";
+
 function Header() {
 
     return (
@@ -8,6 +10,7 @@ function Header() {
                     <img id='logo' src='src/assets/z-score-logo.png' alt='logo'/>
                 </div>
                 <a className='navbar-section'>Z-Score App</a>
+                {/*<Link className='navbar-section' to={'/'}>Z-Score App</Link> this breaks app */}
                 <a className='navbar-section'>Games</a>
                 <a className='navbar-section'>Publications</a>
                 <a className='navbar-section'>Scores</a>

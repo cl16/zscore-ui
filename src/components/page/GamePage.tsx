@@ -5,7 +5,7 @@ export function GamePage() {
     const { gameId } = useParams();
 
     return (
-        <div>This is the GamePage component with gameId: {gameId}</div>
+        <div className={'page-body-main'}>This is the GamePage component with gameId: {gameId}</div>
     )
 }
 

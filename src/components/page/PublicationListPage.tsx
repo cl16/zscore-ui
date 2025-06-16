@@ -1,7 +1,7 @@
 function PublicationListPage() {
 
     return (
-        <div>This is the PublicationList component...</div>
+        <div className={'page-body-main'}>This is the PublicationList component...</div>
     )
 }
 

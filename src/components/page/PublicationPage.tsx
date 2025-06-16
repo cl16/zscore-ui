@@ -5,7 +5,7 @@ function PublicationPage() {
     const { pubId } = useParams();
 
     return (
-        <div>This is the PublicationPage component with pubId: {pubId}</div>
+        <div className={'page-body-main'}>This is the PublicationPage component with pubId: {pubId}</div>
     )
 }
 

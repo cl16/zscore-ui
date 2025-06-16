@@ -1,7 +1,7 @@
 function HomePage() {
 
     return (
-        <div>This is the Home component...</div>
+        <div className={'page-body-main'}>This is the Home component...</div>
     )
 }
 

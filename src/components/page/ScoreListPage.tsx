@@ -1,7 +1,7 @@
 function ScoreListPage() {
 
     return (
-        <div>This is the ScoreList component...</div>
+        <div className={'page-body-main'}>This is the ScoreList component...</div>
     )
 }
 

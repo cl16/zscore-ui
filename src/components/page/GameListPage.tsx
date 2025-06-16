@@ -1,7 +1,7 @@
 function GameListPage() {
 
     return (
-        <div>This is the GameList component...</div>
+        <div className={'page-body-main'}>This is the GameList component...</div>
     )
 }
 
