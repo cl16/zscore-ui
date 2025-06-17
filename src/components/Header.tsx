@@ -9,11 +9,10 @@ function Header() {
                     {/* link below is a placeholder until logo img finalized */}
                     <img id='logo' src='src/assets/z-score-logo.png' alt='logo'/>
                 </div>
-                <a className='navbar-section'>Z-Score App</a>
-                {/*<Link className='navbar-section' to={'/'}>Z-Score App</Link> this breaks app */}
-                <a className='navbar-section'>Games</a>
-                <a className='navbar-section'>Publications</a>
-                <a className='navbar-section'>Scores</a>
+                <Link to={'/'} className='navbar-section navbar-section-actionable'>Z-Score App</Link>
+                <Link to={'/game'} className='navbar-section navbar-section-actionable'>Games</Link>
+                <Link to={'/publication'} className='navbar-section navbar-section-actionable'>Publications</Link>
+                <Link to={'/score'} className='navbar-section navbar-section-actionable'>Scores</Link>
             </nav>
         </div>
     )

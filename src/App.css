@@ -38,10 +38,16 @@
     text-shadow: 1px 2px 5px black;
     -webkit-text-stroke: 1px #1A0606;
     paint-order: stroke fill;
+    color: #C4D85E;
+    text-decoration: none;
 }
 
-.navbar-section:hover {
-    background-color: #61526e;
+.navbar-section-actionable {
+
+}
+
+.navbar-section-actionable:hover {
+    background-color: #232125;
 }
 
 #logo {

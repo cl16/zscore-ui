@@ -17,8 +17,8 @@ function App() {
 
     return (
         <>
-            <Header/>
             <Router>
+                <Header/>
                 <Routes>
                     <Route path="/" element={ <HomePage /> }/>
                     <Route path="/publication" element={ <PublicationListPage /> }/>
@@ -33,4 +33,4 @@ function App() {
     );
 }
 
-export default App
+export default App;
