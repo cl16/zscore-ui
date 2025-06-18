@@ -1,6 +1,14 @@
 import {Link} from "react-router-dom";
 
-function Header() {
+function Header({ activePage } : { activePage: string }) {
+    const linkStandard = 'navbar-section navbar-section-actionable';
+    const linkActive = 'navbar-section navbar-section-active';
+    const linkClasses = {
+        'home': activePage === '/' ? linkActive : linkStandard,
+        'game': activePage === '/game' ? linkActive : linkStandard,
+        'publication': activePage === '/publication' ? linkActive : linkStandard,
+        'score': activePage === '/score' ? linkActive : linkStandard
+    }
 
     return (
         <div className='header-main'>
@@ -9,10 +17,10 @@ function Header() {
                     {/* link below is a placeholder until logo img finalized */}
                     <img id='logo' src='src/assets/z-score-logo.png' alt='logo'/>
                 </div>
-                <Link to={'/'} className='navbar-section navbar-section-actionable'>Z-Score App</Link>
-                <Link to={'/game'} className='navbar-section navbar-section-actionable'>Games</Link>
-                <Link to={'/publication'} className='navbar-section navbar-section-actionable'>Publications</Link>
-                <Link to={'/score'} className='navbar-section navbar-section-actionable'>Scores</Link>
+                <Link to={'/'} className={linkClasses.home}>Z-Score App</Link>
+                <Link to={'/game'} className={linkClasses.game}>Games</Link>
+                <Link to={'/publication'} className={linkClasses.publication}>Publications</Link>
+                <Link to={'/score'} className={linkClasses.score}>Scores</Link>
             </nav>
         </div>
     )

@@ -47,7 +47,12 @@
 }
 
 .navbar-section-actionable:hover {
+    background-color: #312a38;
+}
+
+.navbar-section-active {
     background-color: #232125;
+    pointer-events: none;
 }
 
 #logo {

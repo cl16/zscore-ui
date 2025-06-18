@@ -1,7 +1,7 @@
 import {
-    BrowserRouter as Router,
     Routes,
-    Route
+    Route,
+    useLocation
 } from "react-router-dom";
 import './App.css'
 import Header from './components/Header'
@@ -12,22 +12,27 @@ import GameListPage from "./components/page/GameListPage.tsx";
 import GamePage from "./components/page/GamePage.tsx";
 import PublicationPage from "./components/page/PublicationPage.tsx";
 import ScoreListPage from "./components/page/ScoreListPage.tsx";
+import {useEffect} from "react";
 
 function App() {
 
+    const location = useLocation();
+
+    useEffect(() => {
+        console.log('Current URL:', location.pathname);
+    }, [location]);
+
     return (
         <>
-            <Router>
-                <Header/>
-                <Routes>
-                    <Route path="/" element={ <HomePage /> }/>
-                    <Route path="/publication" element={ <PublicationListPage /> }/>
-                    <Route path="/game" element={ <GameListPage /> }/>
-                    <Route path="/score" element={ <ScoreListPage /> }/>
-                    <Route path="/publication/:pubId" element={ <PublicationPage /> }/>
-                    <Route path="/game/:gameId" element={ <GamePage /> }/>
-                </Routes>
-            </Router>
+            <Header activePage={location.pathname} />
+            <Routes>
+                <Route path="/" element={ <HomePage /> }/>
+                <Route path="/publication" element={ <PublicationListPage /> }/>
+                <Route path="/game" element={ <GameListPage /> }/>
+                <Route path="/score" element={ <ScoreListPage /> }/>
+                <Route path="/publication/:pubId" element={ <PublicationPage /> }/>
+                <Route path="/game/:gameId" element={ <GamePage /> }/>
+            </Routes>
             <Footer/>
         </>
     );
