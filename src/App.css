@@ -80,11 +80,12 @@ input.text-input {
 }
 
 table {
-    border-spacing: 0px;
+    border-spacing: 10px;
 }
 
 table tr:hover {
     background-color: #312a38;
+    border-color: #312a38;
 }
 
 table th td {
@@ -95,4 +96,10 @@ table th td {
 
 th {
     text-align: left;
+}
+
+/* Table styles */
+
+table.data-table {
+    width: 100%;
 }
