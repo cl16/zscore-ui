@@ -6,18 +6,20 @@ function PublicationListTable({content} : {content: IPublication[]}) {
     return (
         <table className={'data-table'}>
             <thead>
-                <th className={'data-table-header data-table-cell'}>
-                    <span>Name</span>
-                    <button>Sort</button>
-                </th>
-                <th className={'data-table-header data-table-cell'}>
-                    <span>Score Average</span>
-                    <button>Sort</button>
-                </th>
-                <th className={'data-table-header data-table-cell'}>
-                    <span>Score Standard Deviation</span>
-                    <button>Sort</button>
-                </th>
+                <tr>
+                    <th className={'data-table-header data-table-cell'}>
+                        <span>Name</span>
+                        <button>Sort</button>
+                    </th>
+                    <th className={'data-table-header data-table-cell'}>
+                        <span>Score Average</span>
+                        <button>Sort</button>
+                    </th>
+                    <th className={'data-table-header data-table-cell'}>
+                        <span>Score Standard Deviation</span>
+                        <button>Sort</button>
+                    </th>
+                </tr>
             </thead>
             <tbody>
             {content.map((row) => {
