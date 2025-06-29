@@ -27,7 +27,6 @@ function PublicationListPage() {
         maxScoreStd: undefined
     }
 
-    // singular state variable
     const [pageState, setPageState] = useState<IPublicationListPageState>(DEFAULT_PAGE_STATE);
 
     function handleFormValue(arg: FormDataEntryValue | null) {
@@ -50,7 +49,22 @@ function PublicationListPage() {
         });
     }
 
+    function nextPage() {
+        const current = Number(pageState.page);
+        const total = Number(pageState.totalPages);
+        if (current < total) {
+            pageState.page = String(current + 1);
+            setPageState(pageState);
+        }
+    }
 
+    function prevPage() {
+        const current = Number(pageState.page);
+        if (current > 0) {
+            pageState.page = String(current - 1);
+            setPageState(pageState); // *** THIS is not working, may need to change to individual state vars again...
+        }
+    }
 
     const [tableData, setTableData] = useState([]);
 
@@ -132,8 +146,8 @@ function PublicationListPage() {
                         <input id={'pub-list-page-number'} name={'page'} className={'text-input'} type={'textbox'} defaultValue={pageState.page || undefined}/>
                         <span> of </span>
                         <span className={'total-page-number'}>{pageState.totalPages}</span>
-                        <button>Prev</button>
-                        <button>Next</button>
+                        <button type={'reset'} onClick={prevPage}>Prev</button>
+                        <button type={'reset'} onClick={nextPage}>Next</button>
                     </div>
                 </form>
 
