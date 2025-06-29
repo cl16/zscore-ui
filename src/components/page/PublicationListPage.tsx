@@ -16,53 +16,79 @@ interface IPublicationListPageState {
 
 function PublicationListPage() {
 
-    const PAGE_SIZE = 20;
     const DEFAULT_PAGE_STATE = {
         page: '0',
         totalPages: 0,
-        searchKey: undefined,
-        minScoreAvg: undefined,
-        maxScoreAvg: undefined,
-        minScoreStd: undefined,
-        maxScoreStd: undefined
+        searchKey: null,
+        minScoreAvg: null,
+        maxScoreAvg: null,
+        minScoreStd: null,
+        maxScoreStd: null
     }
 
-    const [pageState, setPageState] = useState<IPublicationListPageState>(DEFAULT_PAGE_STATE);
+    const [page, setPage] = useState<string | null>('0');
+    const [totalPages, setTotalPages] = useState(0);
+    const [searchKey, setSearchKey] = useState<string | null>(null);
+    const [minScoreAvg, setMinScoreAvg] = useState<string | null>(null);
+    const [maxScoreAvg, setMaxScoreAvg] = useState<string | null>(null);
+    const [minScoreStd, setMinScoreStd] = useState<string | null>(null);
+    const [maxScoreStd, setMaxScoreStd] = useState<string | null>(null);
 
     function handleFormValue(arg: FormDataEntryValue | null) {
         if (arg) {
-            return arg.toString();
+            if (arg === '') {
+                return null;
+            } else {
+                return arg.toString();
+            }
         } else {
-            return undefined;
+            return null;
         }
     }
 
     function applyUserArgs(formData: FormData) {
-        setPageState({
-            page: handleFormValue(formData.get('page')),
-            totalPages: 0,
-            searchKey: handleFormValue(formData.get('search-key')),
-            minScoreAvg: handleFormValue(formData.get('min-score-avg')),
-            maxScoreAvg: handleFormValue(formData.get('max-score-avg')),
-            minScoreStd: handleFormValue(formData.get('min-score-std')),
-            maxScoreStd: handleFormValue(formData.get('max-score-std'))
-        });
+        console.log('\n*** applyUserArgs called ***');
+
+        const pageArg = handleFormValue(formData.get('page'));
+        const searchKeyArg = handleFormValue(formData.get('search-key'))
+        const minScoreAvgArg = handleFormValue(formData.get('min-score-avg'));
+        const maxScoreAvgArg = handleFormValue(formData.get('max-score-avg'));
+        const minScoreStdArg = handleFormValue(formData.get('min-score-std'));
+        const maxScoreStdArg = handleFormValue(formData.get('max-score-std'));
+
+        console.log(`Current state vals... \npage: ${page}\nsearchKey ${searchKey}\nminScoreAvg: ${minScoreAvg}\nmaxScoreAvg: ${maxScoreAvg}\nminScoreStd: ${minScoreStd}\nmaxScoreStd: ${maxScoreStd}`);
+        console.log(`Page's user args... \npageArg: ${pageArg} (${Number(pageArg) - 1})\nsearchKeyArg ${searchKeyArg}\nminScoreAvgArg: ${minScoreAvgArg}\nmaxScoreAvgArg: ${maxScoreAvgArg}\nminScoreStdArg: ${minScoreStdArg}\nmaxScoreStdArg: ${maxScoreStdArg}`);
+        console.log(`User changing state...\npageArg: ${!((String(Number(pageArg) - 1)) === page)}\nsearchKeyArg ${!(searchKeyArg === searchKey)}\nminScoreAvgArg: ${!(minScoreAvgArg === minScoreAvg)}\nmaxScoreAvgArg: ${!(maxScoreAvgArg === maxScoreAvg)}\nminScoreStdArg: ${!(minScoreStdArg === minScoreStd)}\nmaxScoreStdArg: ${!(maxScoreStdArg === maxScoreStd)}`);
+
+        // if no user args have changed state, consider page only
+        if (searchKeyArg === searchKey && minScoreAvgArg === minScoreAvg && maxScoreAvgArg === maxScoreAvg && minScoreStdArg === minScoreStd && maxScoreStdArg === maxScoreStd) {
+            setPage(handleFormValue(String(Number(pageArg) - 1)));
+        }
+        // but if anything else on page has changed from its current state, re-set page to first page and apply that new state
+        else {
+            setPage(DEFAULT_PAGE_STATE.page);
+            setSearchKey(searchKeyArg);
+            setMinScoreAvg(minScoreAvgArg);
+            setMaxScoreAvg(maxScoreAvgArg);
+            setMinScoreStd(minScoreStdArg);
+            setMaxScoreStd(maxScoreStdArg);
+        }
     }
 
     function nextPage() {
-        const current = Number(pageState.page);
-        const total = Number(pageState.totalPages);
-        if (current < total) {
-            pageState.page = String(current + 1);
-            setPageState(pageState);
+        console.log('nextPage called');
+        const current = Number(page);
+        const total = Number(totalPages);
+        if (current < (total - 1)) {
+            setPage(String(current + 1));
         }
     }
 
     function prevPage() {
-        const current = Number(pageState.page);
+        console.log('prevPage called');
+        const current = Number(page);
         if (current > 0) {
-            pageState.page = String(current - 1);
-            setPageState(pageState); // *** THIS is not working, may need to change to individual state vars again...
+            setPage(String(current - 1));
         }
     }
 
@@ -72,23 +98,23 @@ function PublicationListPage() {
         const params: IPublicationParams = {
         };
 
-        if (pageState.page) {
-            params.page = pageState.page;
+        if (page) {
+            params.page = page;
         }
-        if (pageState.searchKey) {
-            params.nameContains = pageState.searchKey;
+        if (searchKey) {
+            params.nameContains = searchKey;
         }
-        if (pageState.minScoreAvg) {
-            params.minScoreAvg = pageState.minScoreAvg;
+        if (minScoreAvg) {
+            params.minScoreAvg = minScoreAvg;
         }
-        if (pageState.maxScoreAvg) {
-            params.maxScoreAvg = pageState.maxScoreAvg;
+        if (maxScoreAvg) {
+            params.maxScoreAvg = maxScoreAvg;
         }
-        if (pageState.minScoreStd) {
-            params.minScoreStd = pageState.minScoreStd;
+        if (minScoreStd) {
+            params.minScoreStd = minScoreStd;
         }
-        if (pageState.maxScoreStd) {
-            params.maxScoreStd = pageState.maxScoreStd;
+        if (maxScoreStd) {
+            params.maxScoreStd = maxScoreStd;
         }
 
         return params;
@@ -100,18 +126,24 @@ function PublicationListPage() {
         Api.getPublicationsByParams(params)
             .then(response => response.json())
             .then(async (data) => {
-                setTableData(data['content']);
+                setTableData(data.content);
+                setTotalPages(data.totalPages);
             })
             .catch(error => console.log(error));
     }
 
     function resetPageState() {
-        setPageState(DEFAULT_PAGE_STATE);
+        setPage(DEFAULT_PAGE_STATE.page);
+        setSearchKey(DEFAULT_PAGE_STATE.searchKey);
+        setMinScoreAvg(DEFAULT_PAGE_STATE.minScoreAvg);
+        setMaxScoreAvg(DEFAULT_PAGE_STATE.maxScoreAvg);
+        setMinScoreStd(DEFAULT_PAGE_STATE.minScoreStd);
+        setMaxScoreStd(DEFAULT_PAGE_STATE.maxScoreStd);
     }
 
     useEffect(() => {
         requestAndSetData();
-    }, [pageState]);
+    }, [page, searchKey, minScoreAvg, maxScoreAvg, minScoreStd, maxScoreStd]);
 
     return (
         <>
@@ -121,21 +153,21 @@ function PublicationListPage() {
                     <div className={'search-filter-container page-tl-container'}>
                         <div className={'search-container page-ml-container'}>
                             <label htmlFor={'pub-list-search'}>Search</label>
-                            <input id={'pub-list-search'} name={'search-key'} className={'text-input'} type={'textbox'} defaultValue={pageState.searchKey || undefined}/>
+                            <input id={'pub-list-search'} name={'search-key'} className={'text-input'} type={'textbox'} defaultValue={searchKey || undefined}/>
                         </div>
                         <div className={'filter-container page-ml-container'}>
 
                             <label htmlFor={'pub-list-min-score-avg'}>Min Score Avg</label>
-                            <input id={'pub-list-min-score-avg'} name={'min-score-avg'} className={'text-input'} type={'textbox'} defaultValue={pageState.minScoreAvg || undefined}/>
+                            <input id={'pub-list-min-score-avg'} name={'min-score-avg'} className={'text-input'} type={'textbox'} defaultValue={minScoreAvg || undefined}/>
 
                             <label htmlFor={'pub-list-max-score-avg'}>Max Score Avg</label>
-                            <input id={'pub-list-max-score-avg'} name={'max-score-avg'} className={'text-input'} type={'textbox'} defaultValue={pageState.maxScoreAvg || undefined}/>
+                            <input id={'pub-list-max-score-avg'} name={'max-score-avg'} className={'text-input'} type={'textbox'} defaultValue={maxScoreAvg || undefined}/>
 
                             <label htmlFor={'pub-list-min-score-std'}>Min Score Std Dev</label>
-                            <input id={'pub-list-min-score-std'} name={'min-score-std'} className={'text-input'} type={'textbox'} defaultValue={pageState.minScoreStd || undefined}/>
+                            <input id={'pub-list-min-score-std'} name={'min-score-std'} className={'text-input'} type={'textbox'} defaultValue={minScoreStd || undefined}/>
 
                             <label htmlFor={'pub-list-max-score-std'}>Max Score Std Dev</label>
-                            <input id={'pub-list-max-score-std'} name={'max-score-std'} className={'text-input'} type={'textbox'} defaultValue={pageState.maxScoreStd || undefined}/>
+                            <input id={'pub-list-max-score-std'} name={'max-score-std'} className={'text-input'} type={'textbox'} defaultValue={maxScoreStd || undefined}/>
 
                         </div>
                         <button type={'submit'}>Apply</button>
@@ -143,11 +175,11 @@ function PublicationListPage() {
                     </div>
                     <div className={'pagination-container'}>
                         <span>Page </span>
-                        <input id={'pub-list-page-number'} name={'page'} className={'text-input'} type={'textbox'} defaultValue={pageState.page || undefined}/>
+                        <input id={'pub-list-page-number'} name={'page'} className={'text-input'} type={'textbox'} defaultValue={(Number(page) + 1) || undefined}/>
                         <span> of </span>
-                        <span className={'total-page-number'}>{pageState.totalPages}</span>
-                        <button type={'reset'} onClick={prevPage}>Prev</button>
-                        <button type={'reset'} onClick={nextPage}>Next</button>
+                        <span className={'total-page-number'}>{totalPages}</span>
+                        <button type={'button'} onClick={prevPage}>Prev</button>
+                        <button type={'button'} onClick={nextPage}>Next</button>
                     </div>
                 </form>
 
