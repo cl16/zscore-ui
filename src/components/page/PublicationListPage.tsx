@@ -78,7 +78,7 @@ function PublicationListPage() {
         }
         // but if anything else on page has changed from its current state, re-set page to first page and apply that new state
         else {
-            tempSetPage(DEFAULT_PAGE_STATE.page);
+            resetPage();
             setSearchKey(searchKeyArg);
             setMinScoreAvg(minScoreAvgArg);
             setMaxScoreAvg(maxScoreAvgArg);
@@ -167,15 +167,26 @@ function PublicationListPage() {
         }
     }
 
+    /**
+     * Reset to first page on both page value and pageInput value.
+     */
+    function resetPage() {
+        setPage(1);
+        setPageInput('1');
+    }
+
     function sortByName() {
         console.log('sortByName clicked');
         if (sortCol != 'name') {
             setSortCol('name');
             setSortDir('asc');
+            resetPage();
         } else if (sortDir === 'asc') {
             toggleSortDir();
+            resetPage();
         } else {
             setSortCol(null);
+            resetPage();
         }
     }
 
@@ -184,10 +195,13 @@ function PublicationListPage() {
         if (sortCol != 'scoreAvg') {
             setSortCol('scoreAvg');
             setSortDir('asc');
+            resetPage();
         } else if (sortDir === 'asc') {
             toggleSortDir();
+            resetPage();
         } else {
             setSortCol(null);
+            resetPage();
         }
     }
 
@@ -196,10 +210,13 @@ function PublicationListPage() {
         if (sortCol != 'scoreStd') {
             setSortCol('scoreStd');
             setSortDir('asc');
+            resetPage();
         } else if (sortDir === 'asc') {
             toggleSortDir();
+            resetPage();
         } else {
             setSortCol(null);
+            resetPage();
         }
     }
 
