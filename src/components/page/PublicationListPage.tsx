@@ -3,19 +3,16 @@ import {useEffect, useState} from "react";
 import PublicationListTable from "../table/PublicationListTable.tsx";
 import type {IPublicationParams} from "../../api/request-interfaces.ts";
 
-interface IPublicationListPageState {
-    page: string | undefined;
-    totalPages: number;
-    searchKey: string | undefined;
-    minScoreAvg: string | undefined;
-    maxScoreAvg: string | undefined;
-    minScoreStd: string | undefined;
-    maxScoreStd: string | undefined;
-}
-
-
 function PublicationListPage() {
 
+    const [tableData, setTableData] = useState([]);
+    const [page, setPage] = useState<string | null>('0');
+    const [totalPages, setTotalPages] = useState(0);
+    const [searchKey, setSearchKey] = useState<string | null>(null);
+    const [minScoreAvg, setMinScoreAvg] = useState<string | null>(null);
+    const [maxScoreAvg, setMaxScoreAvg] = useState<string | null>(null);
+    const [minScoreStd, setMinScoreStd] = useState<string | null>(null);
+    const [maxScoreStd, setMaxScoreStd] = useState<string | null>(null);
     const DEFAULT_PAGE_STATE = {
         page: '0',
         totalPages: 0,
@@ -26,13 +23,9 @@ function PublicationListPage() {
         maxScoreStd: null
     }
 
-    const [page, setPage] = useState<string | null>('0');
-    const [totalPages, setTotalPages] = useState(0);
-    const [searchKey, setSearchKey] = useState<string | null>(null);
-    const [minScoreAvg, setMinScoreAvg] = useState<string | null>(null);
-    const [maxScoreAvg, setMaxScoreAvg] = useState<string | null>(null);
-    const [minScoreStd, setMinScoreStd] = useState<string | null>(null);
-    const [maxScoreStd, setMaxScoreStd] = useState<string | null>(null);
+    useEffect(() => {
+        requestAndSetData();
+    }, [page, searchKey, minScoreAvg, maxScoreAvg, minScoreStd, maxScoreStd]);
 
     function handleFormValue(arg: FormDataEntryValue | null) {
         if (arg) {
@@ -74,25 +67,6 @@ function PublicationListPage() {
             setMaxScoreStd(maxScoreStdArg);
         }
     }
-
-    function nextPage() {
-        console.log('nextPage called');
-        const current = Number(page);
-        const total = Number(totalPages);
-        if (current < (total - 1)) {
-            setPage(String(current + 1));
-        }
-    }
-
-    function prevPage() {
-        console.log('prevPage called');
-        const current = Number(page);
-        if (current > 0) {
-            setPage(String(current - 1));
-        }
-    }
-
-    const [tableData, setTableData] = useState([]);
 
     function buildParams() : IPublicationParams {
         const params: IPublicationParams = {
@@ -141,9 +115,34 @@ function PublicationListPage() {
         setMaxScoreStd(DEFAULT_PAGE_STATE.maxScoreStd);
     }
 
-    useEffect(() => {
-        requestAndSetData();
-    }, [page, searchKey, minScoreAvg, maxScoreAvg, minScoreStd, maxScoreStd]);
+    function nextPage() {
+        console.log('nextPage called');
+        const current = Number(page);
+        const total = Number(totalPages);
+        if (current < (total - 1)) {
+            setPage(String(current + 1));
+        }
+    }
+
+    function prevPage() {
+        console.log('prevPage called');
+        const current = Number(page);
+        if (current > 0) {
+            setPage(String(current - 1));
+        }
+    }
+
+    function sortByName() {
+        console.log('sortByName clicked');
+    }
+
+    function sortByScoreAvg() {
+        console.log('sortByScoreAvg clicked');
+    }
+
+    function sortByScoreStd() {
+        console.log('sortByScoreStd clicked');
+    }
 
     return (
         <>
