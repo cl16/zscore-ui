@@ -28,12 +28,16 @@ function PublicationListPage() {
         minScoreAvg: null,
         maxScoreAvg: null,
         minScoreStd: null,
-        maxScoreStd: null
+        maxScoreStd: null,
+        pageInput: '1'
     }
 
     // state for table sort
     const [sortCol, setSortCol] = useState<'name' | 'scoreAvg' | 'scoreStd' | null>(null);
     const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+
+    // state for page input value
+    const [pageInput, setPageInput] = useState(String(page));
 
 
     useEffect(() => {
@@ -68,7 +72,9 @@ function PublicationListPage() {
 
         // if no user args have changed state, consider page only
         if (searchKeyArg === searchKey && minScoreAvgArg === minScoreAvg && maxScoreAvgArg === maxScoreAvg && minScoreStdArg === minScoreStd && maxScoreStdArg === maxScoreStd) {
-            tempSetPage((pageArg === '' || pageArg === '0' || !pageArg || Number(pageArg) > totalPages) ? 1 : Number(pageArg));
+            const pageValueToSet = (pageArg === '' || pageArg === '0' || !pageArg || Number(pageArg) > totalPages) ? 1 : Number(pageArg);
+            tempSetPage(pageValueToSet);
+            setPageInput(String(pageValueToSet));
         }
         // but if anything else on page has changed from its current state, re-set page to first page and apply that new state
         else {
@@ -137,6 +143,7 @@ function PublicationListPage() {
         setMaxScoreAvg(DEFAULT_PAGE_STATE.maxScoreAvg);
         setMinScoreStd(DEFAULT_PAGE_STATE.minScoreStd);
         setMaxScoreStd(DEFAULT_PAGE_STATE.maxScoreStd);
+        setPageInput(DEFAULT_PAGE_STATE.pageInput);
     }
 
     function nextPage() {
@@ -147,6 +154,7 @@ function PublicationListPage() {
             const next = current + 1;
             console.log(`nextPage: ${current} to ${next}`);
             tempSetPage(next);
+            setPageInput(String(next));
         }
     }
 
@@ -155,6 +163,7 @@ function PublicationListPage() {
         const current = Number(page);
         if (current > 1) {
             tempSetPage(current - 1);
+            setPageInput(String(current - 1));
         }
     }
 
@@ -232,7 +241,7 @@ function PublicationListPage() {
                     </div>
                     <div className={'pagination-container'}>
                         <span>Page </span>
-                        <input id={'pub-list-page-number'} name={'page'} className={'text-input'} type={'textbox'} defaultValue={page}/>
+                        <input id={'pub-list-page-number'} name={'page'} className={'text-input'} type={'textbox'} value={pageInput} onChange={e => setPageInput(e.target.value)}/>
                         <span> of </span>
                         <span className={'total-page-number'}>{totalPages}</span>
                         <button type={'button'} onClick={prevPage}>Prev</button>
