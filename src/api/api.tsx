@@ -20,6 +20,7 @@ export default class Api {
     public static async getPublicationsByParams(params: IPublicationParams) {
         const urlParams = this.buildUrlParams(params);
         const subStr = urlParams === '' ? '' : `?${urlParams}`;
+        console.log(`getPublicationsByParams:  ${subStr}`);
         return await fetch(`${this.baseUrl}/publication${subStr}`);
     }
 }

@@ -1,12 +1,7 @@
 export interface IPagingAndSortingParams {
-    page?: string;
+    page?: number;
     size?: string;
-    sort?: ISortParams;
-}
-
-interface ISortParams {
-    key: string;
-    dir: 'asc' | 'desc';
+    sort?: string;
 }
 
 export interface IPublicationParams extends IPagingAndSortingParams {

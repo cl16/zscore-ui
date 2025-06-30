@@ -19,7 +19,7 @@ function PublicationListTable({content, sortConfig} : {content: IPublication[], 
     }
 
     let scoreAvgColText;
-    if (sortConfig.sortCol === 'score-avg') {
+    if (sortConfig.sortCol === 'scoreAvg') {
         if (sortConfig.sortDir === 'asc') {
             scoreAvgColText = 'Score Avg ↑';
         } else {
@@ -30,7 +30,7 @@ function PublicationListTable({content, sortConfig} : {content: IPublication[], 
     }
 
     let scoreStdColText;
-    if (sortConfig.sortCol === 'score-std') {
+    if (sortConfig.sortCol === 'scoreStd') {
         if (sortConfig.sortDir === 'asc') {
             scoreStdColText = 'Score Std Dev ↑';
         } else {
@@ -47,10 +47,10 @@ function PublicationListTable({content, sortConfig} : {content: IPublication[], 
                     <th className={sortConfig.sortCol === 'name' ? headerClassSorted : headerClassStandard}>
                         <button onClick={sortConfig.toggleName}>{nameColText}</button>
                     </th>
-                    <th className={sortConfig.sortCol === 'score-avg' ? headerClassSorted : headerClassStandard}>
+                    <th className={sortConfig.sortCol === 'scoreAvg' ? headerClassSorted : headerClassStandard}>
                         <button onClick={sortConfig.toggleScoreAvg}>{scoreAvgColText}</button>
                     </th>
-                    <th className={sortConfig.sortCol === 'score-std' ? headerClassSorted : headerClassStandard}>
+                    <th className={sortConfig.sortCol === 'scoreStd' ? headerClassSorted : headerClassStandard}>
                         <button onClick={sortConfig.toggleScoreStd}>{scoreStdColText}</button>
                     </th>
                 </tr>
