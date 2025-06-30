@@ -3,6 +3,14 @@ import {useEffect, useState} from "react";
 import PublicationListTable from "../table/PublicationListTable.tsx";
 import type {IPublicationParams} from "../../api/request-interfaces.ts";
 
+export interface ITableSortConfig {
+    sortCol: 'name' | 'score-avg' | 'score-std' | null;
+    sortDir: 'asc' | 'desc';
+    toggleName: () => void;
+    toggleScoreAvg: () => void;
+    toggleScoreStd: () => void;
+}
+
 function PublicationListPage() {
 
     const [tableData, setTableData] = useState([]);
@@ -22,6 +30,11 @@ function PublicationListPage() {
         minScoreStd: null,
         maxScoreStd: null
     }
+
+    // state for table sort
+    const [sortCol, setSortCol] = useState<string | null>(null);
+    const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+
 
     useEffect(() => {
         requestAndSetData();
@@ -134,14 +147,46 @@ function PublicationListPage() {
 
     function sortByName() {
         console.log('sortByName clicked');
+        if (sortCol != 'name') {
+            setSortCol('name');
+            setSortDir('asc');
+        } else if (sortDir === 'asc') {
+            toggleSortDir();
+        } else {
+            setSortCol(null);
+        }
     }
 
     function sortByScoreAvg() {
         console.log('sortByScoreAvg clicked');
+        if (sortCol != 'score-avg') {
+            setSortCol('score-avg');
+            setSortDir('asc');
+        } else if (sortDir === 'asc') {
+            toggleSortDir();
+        } else {
+            setSortCol(null);
+        }
     }
 
     function sortByScoreStd() {
         console.log('sortByScoreStd clicked');
+        if (sortCol != 'score-std') {
+            setSortCol('score-std');
+            setSortDir('asc');
+        } else if (sortDir === 'asc') {
+            toggleSortDir();
+        } else {
+            setSortCol(null);
+        }
+    }
+
+    function toggleSortDir() {
+        if (sortDir === 'asc') {
+            setSortDir('desc');
+        } else {
+            setSortDir('asc');
+        }
     }
 
     return (
@@ -183,7 +228,13 @@ function PublicationListPage() {
                 </form>
 
                 <div className={'table-container page-tl-container'}>
-                    <PublicationListTable content={tableData}/>
+                    <PublicationListTable content={tableData} sortConfig={{
+                        sortCol: sortCol,
+                        sortDir: sortDir,
+                        toggleName: sortByName,
+                        toggleScoreAvg: sortByScoreAvg,
+                        toggleScoreStd: sortByScoreStd
+                    }}/>
                 </div>
             </div>
         </>

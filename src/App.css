@@ -102,4 +102,9 @@ th {
 
 table.data-table {
     width: 100%;
+    table-layout: fixed;
+}
+
+.data-table-header-sorted {
+    background-color: cadetblue;
 }
