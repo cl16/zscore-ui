@@ -6,6 +6,8 @@ function PublicationListTable({content, sortConfig} : {content: IPublication[], 
 
     const headerClassStandard = 'data-table-header data-table-cell';
     const headerClassSorted = 'data-table-header-sorted data-table-header data-table-cell';
+    const dataCellClassStandard = 'data-table-data data-table-cell';
+    const dataCellClassSorted = 'data-table-col-sorted data-table-data data-table-cell';
 
     let nameColText;
     if (sortConfig.sortCol === 'name') {
@@ -59,9 +61,9 @@ function PublicationListTable({content, sortConfig} : {content: IPublication[], 
             {content.map((row) => {
                 return (
                     <tr className={'data-table-row'}>
-                        <td className={'data-table-data data-table-cell'}>{row.name}</td>
-                        <td className={'data-table-data data-table-cell'}>{row.scoreAvg}</td>
-                        <td className={'data-table-data data-table-cell'}>{row.scoreStd}</td>
+                        <td className={sortConfig.sortCol === 'name' ? dataCellClassSorted : dataCellClassStandard}>{row.name}</td>
+                        <td className={sortConfig.sortCol === 'scoreAvg' ? dataCellClassSorted : dataCellClassStandard}>{row.scoreAvg}</td>
+                        <td className={sortConfig.sortCol === 'scoreStd' ? dataCellClassSorted : dataCellClassStandard}>{row.scoreStd}</td>
                     </tr>
                 )
             })}

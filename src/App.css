@@ -89,9 +89,9 @@ table tr:hover {
 }
 
 table th td {
-    border: 0px;
-    padding: 0px;
-    margin: 0px;
+    border: 0;
+    padding: 0;
+    margin: 0;
 }
 
 th {
@@ -106,5 +106,9 @@ table.data-table {
 }
 
 .data-table-header-sorted {
-    background-color: cadetblue;
+    background-color: #312a38;
+}
+
+.data-table-col-sorted {
+    background-color: #312a38;
 }
