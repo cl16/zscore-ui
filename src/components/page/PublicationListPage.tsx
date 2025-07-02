@@ -2,14 +2,7 @@ import Api from "../../api/api.tsx";
 import {useEffect, useState} from "react";
 import PublicationListTable from "../table/PublicationListTable.tsx";
 import type {IPublicationParams} from "../../api/request-interfaces.ts";
-
-export interface ITableSortConfig {
-    sortCol: 'name' | 'scoreAvg' | 'scoreStd' | null;
-    sortDir: 'asc' | 'desc';
-    toggleName: () => void;
-    toggleScoreAvg: () => void;
-    toggleScoreStd: () => void;
-}
+import {handleFormValue} from "../../helper/page-data.tsx";
 
 function PublicationListPage() {
 
@@ -39,18 +32,6 @@ function PublicationListPage() {
         requestAndSetData();
     }, [page, searchKey, minScoreAvg, maxScoreAvg, minScoreStd, maxScoreStd, sortCol, sortDir]);
 
-    function handleFormValue(arg: FormDataEntryValue | null) {
-        if (arg) {
-            if (arg === '') {
-                return null;
-            } else {
-                return arg.toString();
-            }
-        } else {
-            return null;
-        }
-    }
-
     function applyUserArgs(formData: FormData) {
         const pageArg = handleFormValue(formData.get('page'));
         const searchKeyArg = handleFormValue(formData.get('search-key'))
@@ -59,13 +40,12 @@ function PublicationListPage() {
         const minScoreStdArg = handleFormValue(formData.get('min-score-std'));
         const maxScoreStdArg = handleFormValue(formData.get('max-score-std'));
 
-        // if no user args have changed state, consider page only
+        // If no user args have changed state, consider page arg only
         if (searchKeyArg === searchKey && minScoreAvgArg === minScoreAvg && maxScoreAvgArg === maxScoreAvg && minScoreStdArg === minScoreStd && maxScoreStdArg === maxScoreStd) {
             const pageValueToSet = (pageArg === '' || pageArg === '0' || !pageArg || Number(pageArg) > totalPages) ? 1 : Number(pageArg);
-            tempSetPage(pageValueToSet);
-            setPageInput(String(pageValueToSet));
+            setPageMaster(pageValueToSet);
         }
-        // but if anything else on page has changed from its current state, re-set page to first page and apply that new state
+        // If any user arg has changed state, re-set page to first page and apply new user-requested state
         else {
             setPageMaster(1);
             setSearchKey(searchKeyArg);
@@ -77,22 +57,15 @@ function PublicationListPage() {
         }
     }
 
-    function tempSetPage(n: number) {
-        setPage(n);
-    }
-
     function buildParams() : IPublicationParams {
         const params: IPublicationParams = {
         };
-
         if (page) {
             params.page = page - 1; // pagination 0-indexed in API
         }
-
         if (sortCol) {
             params.sort = `${sortCol},${sortDir}`
         }
-
         if (searchKey) {
             params.nameContains = searchKey;
         }
@@ -108,7 +81,6 @@ function PublicationListPage() {
         if (maxScoreStd) {
             params.maxScoreStd = maxScoreStd;
         }
-
         return params;
     }
 
@@ -124,7 +96,7 @@ function PublicationListPage() {
     }
 
     function resetPageState() {
-        tempSetPage(DEFAULT_PAGE_STATE.page);
+        setPage(DEFAULT_PAGE_STATE.page);
         setSearchKey(DEFAULT_PAGE_STATE.searchKey);
         setMinScoreAvg(DEFAULT_PAGE_STATE.minScoreAvg);
         setMaxScoreAvg(DEFAULT_PAGE_STATE.maxScoreAvg);
@@ -154,35 +126,9 @@ function PublicationListPage() {
         setPageInput(String(n));
     }
 
-    function sortByName() {
-        if (sortCol != 'name') {
-            setSortCol('name');
-            setSortDir('asc');
-            setPageMaster(1);
-        } else if (sortDir === 'asc') {
-            toggleSortDir();
-            setPageMaster(1);
-        } else {
-            setSortCol(null);
-            setPageMaster(1);
-        }
-    }
-
-    function sortByScoreAvg() {
-        if (sortCol != 'scoreAvg') {
-            setSortCol('scoreAvg');
-            setSortDir('asc');
-        } else if (sortDir === 'asc') {
-            toggleSortDir();
-        } else {
-            setSortCol(null);
-        }
-        setPageMaster(1);
-    }
-
-    function sortByScoreStd() {
-        if (sortCol != 'scoreStd') {
-            setSortCol('scoreStd');
+    function sortByColumn(column: 'name' | 'scoreAvg' | 'scoreStd' | null) {
+        if (sortCol != column) {
+            setSortCol(column);
             setSortDir('asc');
         } else if (sortDir === 'asc') {
             toggleSortDir();
@@ -242,9 +188,7 @@ function PublicationListPage() {
                     <PublicationListTable content={tableData} sortConfig={{
                         sortCol: sortCol,
                         sortDir: sortDir,
-                        toggleName: sortByName,
-                        toggleScoreAvg: sortByScoreAvg,
-                        toggleScoreStd: sortByScoreStd
+                        toggleSortCol: sortByColumn
                     }}/>
                 </div>
             </div>

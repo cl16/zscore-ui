@@ -1,8 +1,12 @@
 import type {IPublication} from "../entity/publication.ts";
-import type {ITableSortConfig} from "../page/PublicationListPage.tsx";
+import type {ITableSortConfig} from "../../interface.ts";
 
 
-function PublicationListTable({content, sortConfig} : {content: IPublication[], sortConfig: ITableSortConfig}) {
+function PublicationListTable(
+    {content, sortConfig} : {
+        content: IPublication[],
+        sortConfig: ITableSortConfig<'name' | 'scoreAvg' | 'scoreStd' | null>
+    }) {
 
     const headerClassStandard = 'data-table-header data-table-cell';
     const headerClassSorted = 'data-table-header-sorted data-table-header data-table-cell';
@@ -47,13 +51,13 @@ function PublicationListTable({content, sortConfig} : {content: IPublication[], 
             <thead>
                 <tr>
                     <th className={sortConfig.sortCol === 'name' ? headerClassSorted : headerClassStandard}>
-                        <button onClick={sortConfig.toggleName}>{nameColText}</button>
+                        <button onClick={() => sortConfig.toggleSortCol('name')}>{nameColText}</button>
                     </th>
                     <th className={sortConfig.sortCol === 'scoreAvg' ? headerClassSorted : headerClassStandard}>
-                        <button onClick={sortConfig.toggleScoreAvg}>{scoreAvgColText}</button>
+                        <button onClick={() => sortConfig.toggleSortCol('scoreAvg')}>{scoreAvgColText}</button>
                     </th>
                     <th className={sortConfig.sortCol === 'scoreStd' ? headerClassSorted : headerClassStandard}>
-                        <button onClick={sortConfig.toggleScoreStd}>{scoreStdColText}</button>
+                        <button onClick={() => sortConfig.toggleSortCol('scoreStd')}>{scoreStdColText}</button>
                     </th>
                 </tr>
             </thead>
