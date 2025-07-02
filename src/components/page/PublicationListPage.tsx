@@ -15,12 +15,15 @@ function PublicationListPage() {
 
     const [tableData, setTableData] = useState([]);
     const [page, setPage] = useState<number>(1);
+    const [pageInput, setPageInput] = useState(String(page));
     const [totalPages, setTotalPages] = useState(0);
     const [searchKey, setSearchKey] = useState<string | null>(null);
     const [minScoreAvg, setMinScoreAvg] = useState<string | null>(null);
     const [maxScoreAvg, setMaxScoreAvg] = useState<string | null>(null);
     const [minScoreStd, setMinScoreStd] = useState<string | null>(null);
     const [maxScoreStd, setMaxScoreStd] = useState<string | null>(null);
+    const [sortCol, setSortCol] = useState<'name' | 'scoreAvg' | 'scoreStd' | null>(null);
+    const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
     const DEFAULT_PAGE_STATE = {
         page: 1,
         totalPages: 0,
@@ -31,14 +34,6 @@ function PublicationListPage() {
         maxScoreStd: null,
         pageInput: '1'
     }
-
-    // state for table sort
-    const [sortCol, setSortCol] = useState<'name' | 'scoreAvg' | 'scoreStd' | null>(null);
-    const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
-
-    // state for page input value
-    const [pageInput, setPageInput] = useState(String(page));
-
 
     useEffect(() => {
         requestAndSetData();
@@ -57,18 +52,12 @@ function PublicationListPage() {
     }
 
     function applyUserArgs(formData: FormData) {
-        console.log('\n*** applyUserArgs called ***');
-
         const pageArg = handleFormValue(formData.get('page'));
         const searchKeyArg = handleFormValue(formData.get('search-key'))
         const minScoreAvgArg = handleFormValue(formData.get('min-score-avg'));
         const maxScoreAvgArg = handleFormValue(formData.get('max-score-avg'));
         const minScoreStdArg = handleFormValue(formData.get('min-score-std'));
         const maxScoreStdArg = handleFormValue(formData.get('max-score-std'));
-
-        console.log(`Current state vals... \npage: ${page}\nsearchKey ${searchKey}\nminScoreAvg: ${minScoreAvg}\nmaxScoreAvg: ${maxScoreAvg}\nminScoreStd: ${minScoreStd}\nmaxScoreStd: ${maxScoreStd}`);
-        console.log(`Page's user args... \npageArg: ${pageArg} (${Number(pageArg)})\nsearchKeyArg ${searchKeyArg}\nminScoreAvgArg: ${minScoreAvgArg}\nmaxScoreAvgArg: ${maxScoreAvgArg}\nminScoreStdArg: ${minScoreStdArg}\nmaxScoreStdArg: ${maxScoreStdArg}`);
-        console.log(`User changing state...\npageArg: ${!(Number(pageArg) === page)}\nsearchKeyArg ${!(searchKeyArg === searchKey)}\nminScoreAvgArg: ${!(minScoreAvgArg === minScoreAvg)}\nmaxScoreAvgArg: ${!(maxScoreAvgArg === maxScoreAvg)}\nminScoreStdArg: ${!(minScoreStdArg === minScoreStd)}\nmaxScoreStdArg: ${!(maxScoreStdArg === maxScoreStd)}`);
 
         // if no user args have changed state, consider page only
         if (searchKeyArg === searchKey && minScoreAvgArg === minScoreAvg && maxScoreAvgArg === maxScoreAvg && minScoreStdArg === minScoreStd && maxScoreStdArg === maxScoreStd) {
@@ -78,17 +67,17 @@ function PublicationListPage() {
         }
         // but if anything else on page has changed from its current state, re-set page to first page and apply that new state
         else {
-            resetPage();
+            setPageMaster(1);
             setSearchKey(searchKeyArg);
             setMinScoreAvg(minScoreAvgArg);
             setMaxScoreAvg(maxScoreAvgArg);
             setMinScoreStd(minScoreStdArg);
             setMaxScoreStd(maxScoreStdArg);
+            setSortCol(null);
         }
     }
 
     function tempSetPage(n: number) {
-        console.log(`setPage called with arg: ${n}`);
         setPage(n);
     }
 
@@ -96,7 +85,6 @@ function PublicationListPage() {
         const params: IPublicationParams = {
         };
 
-        console.log(`Page val is: ${page}`);
         if (page) {
             params.page = page - 1; // pagination 0-indexed in API
         }
@@ -126,7 +114,6 @@ function PublicationListPage() {
 
     function requestAndSetData() {
         const params: IPublicationParams = buildParams();
-        console.log(params);
         Api.getPublicationsByParams(params)
             .then(response => response.json())
             .then(async (data) => {
@@ -144,80 +131,65 @@ function PublicationListPage() {
         setMinScoreStd(DEFAULT_PAGE_STATE.minScoreStd);
         setMaxScoreStd(DEFAULT_PAGE_STATE.maxScoreStd);
         setPageInput(DEFAULT_PAGE_STATE.pageInput);
+        setSortCol(null);
     }
 
     function nextPage() {
-        console.log('nextPage called');
         const current = Number(page);
         const total = Number(totalPages);
         if (current < total) {
-            const next = current + 1;
-            console.log(`nextPage: ${current} to ${next}`);
-            tempSetPage(next);
-            setPageInput(String(next));
+            setPageMaster(current + 1);
         }
     }
 
     function prevPage() {
-        console.log('prevPage called');
         const current = Number(page);
         if (current > 1) {
-            tempSetPage(current - 1);
-            setPageInput(String(current - 1));
+            setPageMaster(current - 1);
         }
     }
 
-    /**
-     * Reset to first page on both page value and pageInput value.
-     */
-    function resetPage() {
-        setPage(1);
-        setPageInput('1');
+    function setPageMaster(n: number) {
+        setPage(n);
+        setPageInput(String(n));
     }
 
     function sortByName() {
-        console.log('sortByName clicked');
         if (sortCol != 'name') {
             setSortCol('name');
             setSortDir('asc');
-            resetPage();
+            setPageMaster(1);
         } else if (sortDir === 'asc') {
             toggleSortDir();
-            resetPage();
+            setPageMaster(1);
         } else {
             setSortCol(null);
-            resetPage();
+            setPageMaster(1);
         }
     }
 
     function sortByScoreAvg() {
-        console.log('sortByScoreAvg clicked');
         if (sortCol != 'scoreAvg') {
             setSortCol('scoreAvg');
             setSortDir('asc');
-            resetPage();
         } else if (sortDir === 'asc') {
             toggleSortDir();
-            resetPage();
         } else {
             setSortCol(null);
-            resetPage();
         }
+        setPageMaster(1);
     }
 
     function sortByScoreStd() {
-        console.log('sortByScoreStd clicked');
         if (sortCol != 'scoreStd') {
             setSortCol('scoreStd');
             setSortDir('asc');
-            resetPage();
         } else if (sortDir === 'asc') {
             toggleSortDir();
-            resetPage();
         } else {
             setSortCol(null);
-            resetPage();
         }
+        setPageMaster(1);
     }
 
     function toggleSortDir() {
