@@ -1,5 +1,5 @@
-import type {IPublication} from "../entity/publication.ts";
-import type {ITableSortConfig} from "../../interface.ts";
+import type {IPublication} from "../../types/interfaces.ts";
+import type {ITableSortConfig} from "../../types/interfaces.ts";
 
 
 function PublicationListTable(
