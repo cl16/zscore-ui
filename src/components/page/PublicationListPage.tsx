@@ -1,8 +1,8 @@
 import Api from "../../api/api.tsx";
 import {useEffect, useState} from "react";
-import PublicationListTable from "../table/PublicationListTable.tsx";
 import type {IPublicationParams} from "../../api/request-interfaces.ts";
 import {handleFormValue} from "../../helper/page-data.tsx";
+import DataTable from "../table/DataTable.tsx";
 
 function PublicationListPage() {
 
@@ -185,7 +185,7 @@ function PublicationListPage() {
                 </form>
 
                 <div className={'table-container page-tl-container'}>
-                    <PublicationListTable content={tableData} sortConfig={{
+                    <DataTable content={tableData} columns={['name', 'scoreAvg', 'scoreStd']} sortConfig={{
                         sortCol: sortCol,
                         sortDir: sortDir,
                         toggleSortCol: sortByColumn
