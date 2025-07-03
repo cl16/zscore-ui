@@ -64,7 +64,7 @@ function PublicationListTable(
             <tbody>
             {content.map((row) => {
                 return (
-                    <tr className={'data-table-row'}>
+                    <tr key={row.pubId} className={'data-table-row'}>
                         <td className={sortConfig.sortCol === 'name' ? dataCellClassSorted : dataCellClassStandard}>{row.name}</td>
                         <td className={sortConfig.sortCol === 'scoreAvg' ? dataCellClassSorted : dataCellClassStandard}>{row.scoreAvg}</td>
                         <td className={sortConfig.sortCol === 'scoreStd' ? dataCellClassSorted : dataCellClassStandard}>{row.scoreStd}</td>
