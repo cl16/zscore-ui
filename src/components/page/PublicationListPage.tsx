@@ -185,10 +185,15 @@ function PublicationListPage() {
                 </form>
 
                 <div className={'table-container page-tl-container'}>
-                    <DataTable content={tableData} columns={['name', 'scoreAvg', 'scoreStd']} sortConfig={{
-                        sortCol: sortCol,
-                        sortDir: sortDir,
-                        toggleSortCol: sortByColumn
+                    <DataTable content={tableData} config={{
+                        columnsInternal: ['name', 'scoreAvg', 'scoreStd'],
+                        columnsExternal: ['Name', 'Score Average', 'Score Standard Deviation'],
+                        idString: 'pubId',
+                        sortConfig: {
+                            sortCol: sortCol,
+                            sortDir: sortDir,
+                            toggleSortCol: sortByColumn
+                        }
                     }}/>
                 </div>
             </div>

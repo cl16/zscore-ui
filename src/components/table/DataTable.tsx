@@ -1,11 +1,11 @@
-import type {ColumnGroup, Entity, SortConfig} from "../../types/types.ts";
+import type {Entity} from "../../types/types.ts";
+import type {IDataTableConfig} from "../../types/interfaces.ts";
 
 
 function DataTable(
-    {content, columns, sortConfig} : {
+    {content, config} : {
         content: Entity[],
-        columns: ColumnGroup[],
-        sortConfig: SortConfig
+        config: IDataTableConfig
     }) {
 
     const headerClassStandard = 'data-table-header data-table-cell';
@@ -16,26 +16,26 @@ function DataTable(
     const columnLabels: string[] = [];
     const headerClasses: string[] = [];
     const cellClasses: string[] = [];
-    for (const col of columns) {
-        if (sortConfig.sortCol === col) {
-            columnLabels.push(`${col} ${sortConfig.sortDir === 'asc' ? ' ↑' : ' ↓'}`);
+    config.columnsInternal.map((col, i) => {
+        if (config.sortConfig.sortCol === col) {
+            columnLabels.push(`${config.columnsExternal[i]} ${config.sortConfig.sortDir === 'asc' ? ' ↑' : ' ↓'}`);
             headerClasses.push(headerClassSorted);
             cellClasses.push(cellClassSorted);
         } else {
-            columnLabels.push(col);
+            columnLabels.push(config.columnsExternal[i]);
             headerClasses.push(headerClassStandard);
             cellClasses.push(cellClassStandard);
         }
-    }
+    });
 
     return (
         <table className={'data-table'}>
             <thead>
                 <tr>
-                    {columns.map((col, i) => {
+                    {config.columnsInternal.map((col, i) => {
                         return (
-                            <th className={headerClasses[i]}>
-                                <button onClick={() => sortConfig.toggleSortCol(col)}>{columnLabels[i]}</button>
+                            <th key={col} className={headerClasses[i]}>
+                                <button onClick={() => config.sortConfig.toggleSortCol(col)}>{columnLabels[i]}</button>
                             </th>
                         )
                     })}
@@ -44,10 +44,10 @@ function DataTable(
             <tbody>
                 {content.map((row) => {
                     return (
-                        <tr className={'data-table-row'}>
-                            {columns.map((col, i) => {
+                        <tr key={row[config.idString]} className={'data-table-row'}>
+                            {config.columnsInternal.map((col, i) => {
                                 return (
-                                    <td className={cellClasses[i]}>{row[col]}</td>
+                                    <td key={`${row[config.idString]}-${col}`} className={cellClasses[i]}>{row[col]}</td>
                                 )
                             })}
                         </tr>
