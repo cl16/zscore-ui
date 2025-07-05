@@ -59,13 +59,12 @@ function PublicationListPage() {
     }
 
     function buildParams() : IPublicationParams {
-        const params: IPublicationParams = {
-        };
+        const params: IPublicationParams = {};
         if (page) {
             params.page = page - 1; // pagination 0-indexed in API
         }
         if (sortCol) {
-            params.sort = `${sortCol},${sortDir}`
+            params.sort = `${sortCol},${sortDir}`;
         }
         if (searchKey) {
             params.nameContains = searchKey;

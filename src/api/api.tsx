@@ -1,4 +1,4 @@
-import type {IPublicationParams} from "./request-interfaces.ts";
+import type {IGameParams, IPublicationParams} from "./request-interfaces.ts";
 import type {UrlParams} from "./request-types.ts";
 
 export default class Api {
@@ -22,5 +22,12 @@ export default class Api {
         const subStr = urlParams === '' ? '' : `?${urlParams}`;
         console.log(`getPublicationsByParams:  ${subStr}`);
         return await fetch(`${this.baseUrl}/publication${subStr}`);
+    }
+
+    public static async getGamesByParams(params: IGameParams) {
+        const urlParams = this.buildUrlParams(params);
+        const subStr = urlParams === '' ? '' : `?${urlParams}`;
+        console.log(`getGamesByParams: ${subStr}`);
+        return await fetch(`${this.baseUrl}/game${subStr}`);
     }
 }

@@ -12,3 +12,7 @@ export interface IPublicationParams extends IPagingAndSortingParams {
     name?: string;
     nameContains?: string;
 }
+
+export interface IGameParams extends IPagingAndSortingParams {
+    titleContains?: string;
+}
