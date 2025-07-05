@@ -1,4 +1,3 @@
-
 export interface IPublication {
     'pubId': number,
     'name': string,
@@ -21,11 +20,6 @@ export interface IStatReview {
     'date': string,
     'score': number,
     'zscore': number
-}
-
-export interface IEntity {
-    idString: () => string;
-    getAttr: (attr: string) => string;
 }
 
 export interface ITableSortConfig<T> {

@@ -1,6 +1,5 @@
 import type {IDataTableConfig} from "../../types/interfaces.ts";
 
-
 function DataTable<T>(
     {content, config} : {
         content: T[],
