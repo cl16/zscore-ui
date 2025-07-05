@@ -3,10 +3,11 @@ import {useEffect, useState} from "react";
 import type {IPublicationParams} from "../../api/request-interfaces.ts";
 import {handleFormValue} from "../../helper/page-data.tsx";
 import DataTable from "../table/DataTable.tsx";
+import type {IPublication} from "../../types/interfaces.ts";
 
 function PublicationListPage() {
 
-    const [tableData, setTableData] = useState([]);
+    const [tableData, setTableData] = useState<IPublication[]>([]);
     const [page, setPage] = useState<number>(1);
     const [pageInput, setPageInput] = useState(String(page));
     const [totalPages, setTotalPages] = useState(0);
@@ -15,7 +16,7 @@ function PublicationListPage() {
     const [maxScoreAvg, setMaxScoreAvg] = useState<string | null>(null);
     const [minScoreStd, setMinScoreStd] = useState<string | null>(null);
     const [maxScoreStd, setMaxScoreStd] = useState<string | null>(null);
-    const [sortCol, setSortCol] = useState<'name' | 'scoreAvg' | 'scoreStd' | null>(null);
+    const [sortCol, setSortCol] = useState<keyof IPublication | null>(null);
     const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
     const DEFAULT_PAGE_STATE = {
         page: 1,
@@ -126,9 +127,9 @@ function PublicationListPage() {
         setPageInput(String(n));
     }
 
-    function sortByColumn(column: 'name' | 'scoreAvg' | 'scoreStd' | null) {
+    function sortByColumn(column: keyof IPublication | null) {
         if (sortCol != column) {
-            setSortCol(column);
+            setSortCol(column as keyof IPublication | null);
             setSortDir('asc');
         } else if (sortDir === 'asc') {
             toggleSortDir();
@@ -185,9 +186,12 @@ function PublicationListPage() {
                 </form>
 
                 <div className={'table-container page-tl-container'}>
-                    <DataTable content={tableData} config={{
-                        columnsInternal: ['name', 'scoreAvg', 'scoreStd'],
-                        columnsExternal: ['Name', 'Score Average', 'Score Standard Deviation'],
+                    <DataTable<IPublication> content={tableData} config={{
+                        columns: [
+                            {key: 'name', external: 'Name'},
+                            {key: 'scoreAvg', external: 'Score Average'},
+                            {key: 'scoreStd', external: 'Score Standard Deviation'}
+                        ],
                         idString: 'pubId',
                         sortConfig: {
                             sortCol: sortCol,

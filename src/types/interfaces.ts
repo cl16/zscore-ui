@@ -1,4 +1,3 @@
-import type {ColumnGroup, EntityId, SortConfig} from "./types.ts";
 
 export interface IPublication {
     'pubId': number,
@@ -24,15 +23,24 @@ export interface IStatReview {
     'zscore': number
 }
 
-export interface ITableSortConfig<T extends string | null> {
-    sortCol: T;
-    sortDir: 'asc' | 'desc';
-    toggleSortCol: (col: T) => void;
+export interface IEntity {
+    idString: () => string;
+    getAttr: (attr: string) => string;
 }
 
-export interface IDataTableConfig {
-    columnsInternal: ColumnGroup[],
-    columnsExternal: string[],
-    idString: EntityId,
-    sortConfig: SortConfig;
+export interface ITableSortConfig<T> {
+    sortCol: keyof T | null;
+    sortDir: 'asc' | 'desc';
+    toggleSortCol: (col: keyof T) => void;
+}
+
+export interface IDataTableConfig<T> {
+    columns: ITableColumn<T>[];
+    idString: keyof T;
+    sortConfig: ITableSortConfig<T>;
+}
+
+export interface ITableColumn<T> {
+    key: keyof T;
+    external: string;
 }
