@@ -15,16 +15,18 @@ function GameListPage() {
     const [searchKey, setSearchKey] = useState<string | null>(null);
     const [sortCol, setSortCol] = useState<keyof IGame | null>(null);
     const [sortDir, setSortDir] = useState<SortDir>('asc');
+    const [requestError, setRequestError] = useState<boolean>(false);
     const DEFAULT_PAGE_STATE = {
         page: 1,
         totalPages: 0,
         searchKey: null,
-        pageInput: '1'
+        pageInput: '1',
+        requestError: false
     }
 
     useEffect(() => {
         requestAndSetData();
-    }, [page, searchKey, sortCol, sortDir]);
+    }, [page, searchKey, sortCol, sortDir, requestError]);
 
     function applyUserArgs(formData: FormData) {
         const pageArg = handleFormValue(formData.get('page'));
@@ -60,12 +62,16 @@ function GameListPage() {
     function requestAndSetData() {
         const params: IGameParams = buildParams();
         Api.getGamesByParams(params)
-            .then(response => response.json())
             .then(async (data) => {
+                console.log(`Data length: ${data.content.length}`);
+                setRequestError(false);
                 setTableData(data.content);
                 setTotalPages(data.totalPages);
             })
-            .catch(error => console.log(error));
+            .catch(error => {
+                console.log('RENDER PAGE ERROR MSG', error)
+                setRequestError(true);
+            });
     }
 
     function resetPageState() {
@@ -73,6 +79,7 @@ function GameListPage() {
         setSearchKey(DEFAULT_PAGE_STATE.searchKey);
         setPageInput(DEFAULT_PAGE_STATE.pageInput);
         setSortCol(null);
+        setRequestError(false);
     }
 
     function nextPage() {
@@ -139,17 +146,18 @@ function GameListPage() {
                 </form>
 
                 <div className={'table-container page-tl-container'}>
-                    <DataTable<IGame> content={tableData} config={{
-                        columns: [
-                            {key: 'title', external: 'Title'}
-                        ],
-                        idString: 'gameId',
-                        sortConfig: {
-                            sortCol: sortCol,
-                            sortDir: sortDir,
-                            toggleSortCol: sortByColumn
-                        }
-                    }}/>
+                    {requestError ? 'An error occurred' : tableData.length === 0 ? 'No results' : <DataTable<IGame> content={tableData} config={{
+                                                                    columns: [
+                                                                        {key: 'title', external: 'Title'}
+                                                                    ],
+                                                                    idString: 'gameId',
+                                                                    sortConfig: {
+                                                                        sortCol: sortCol,
+                                                                        sortDir: sortDir,
+                                                                        toggleSortCol: sortByColumn
+                                                                    }
+                                                                }}/>
+                    }
                 </div>
             </div>
         </>

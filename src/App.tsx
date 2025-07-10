@@ -12,15 +12,10 @@ import GameListPage from "./components/page/GameListPage.tsx";
 import GamePage from "./components/page/GamePage.tsx";
 import PublicationPage from "./components/page/PublicationPage.tsx";
 import ScoreListPage from "./components/page/ScoreListPage.tsx";
-import {useEffect} from "react";
 
 function App() {
 
     const location = useLocation();
-
-    useEffect(() => {
-        console.log('Current URL:', location.pathname);
-    }, [location]);
 
     return (
         <>

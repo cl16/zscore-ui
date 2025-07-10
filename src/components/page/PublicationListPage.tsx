@@ -89,6 +89,7 @@ function PublicationListPage() {
         Api.getPublicationsByParams(params)
             .then(response => response.json())
             .then(async (data) => {
+                console.log(`response data length: ${data.content.length}`);
                 setTableData(data.content);
                 setTotalPages(data.totalPages);
             })
