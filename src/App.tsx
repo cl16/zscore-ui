@@ -7,11 +7,12 @@ import './App.css'
 import Header from './components/Header'
 import Footer from "./components/Footer.tsx";
 import HomePage from "./components/page/HomePage.tsx";
-import PublicationListPage from "./components/page/PublicationListPage.tsx";
+import PublicationListPageOld from "./components/page/PublicationListPageOld.tsx";
 import GameListPage from "./components/page/GameListPage.tsx";
 import GamePage from "./components/page/GamePage.tsx";
 import PublicationPage from "./components/page/PublicationPage.tsx";
 import ScoreListPage from "./components/page/ScoreListPage.tsx";
+import PublicationListPage from "./components/page/PublicationListPage.tsx";
 
 function App() {
 
