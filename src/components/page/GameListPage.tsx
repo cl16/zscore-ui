@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import Api from "../../api/api.tsx";
+import ApiOld from "../../api/api-old.tsx";
 import type {IGame} from "../../types/interfaces.ts";
 import type {SortDir} from "../../types/types.ts";
 import type {IGameParams} from "../../api/request-interfaces.ts";
@@ -61,7 +61,7 @@ function GameListPage() {
 
     function requestAndSetData() {
         const params: IGameParams = buildParams();
-        Api.getGamesByParams(params)
+        ApiOld.getGamesByParams(params)
             .then(async (data) => {
                 console.log(`Data length: ${data.content.length}`);
                 setRequestError(false);

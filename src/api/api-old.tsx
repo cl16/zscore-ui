@@ -1,7 +1,7 @@
 import type {IGameParams, IPublicationParams} from "./request-interfaces.ts";
 import type {UrlParams} from "./request-types.ts";
 
-export default class Api {
+export default class ApiOld {
 
     private static baseUrl = 'http://localhost:8080';
 
@@ -44,5 +44,23 @@ export default class Api {
         const urlParams = this.buildUrlParams(params);
         const subStr = urlParams === '' ? '' : `?${urlParams}`;
         return await this.makeRequest(`${this.baseUrl}/game${subStr}`);
+    }
+}
+
+// newer way
+export class BaseApiService {
+
+    private static baseUrl = 'http://localhost:8080';
+
+    private static async makeRequest(url: string) {
+        console.log(`REQUEST:  ${url}`);
+        return fetch(url).then(async response => {
+            console.log(`RESPONSE: ${response.status}`);
+            if (response.status === 200) {
+                return await response.json();
+            } else {
+                throw new Error('Response contained non-OK status code');
+            }
+        });
     }
 }

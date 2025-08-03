@@ -1,4 +1,4 @@
-import Api from "../../api/api.tsx";
+import ApiOld from "../../api/api-old.tsx";
 import {useEffect, useState} from "react";
 import type {IPublicationParams} from "../../api/request-interfaces.ts";
 import {handleFormValue} from "../../helper/page-data.tsx";
@@ -86,7 +86,7 @@ function PublicationListPage() {
 
     function requestAndSetData() {
         const params: IPublicationParams = buildParams();
-        Api.getPublicationsByParams(params)
+        ApiOld.getPublicationsByParams(params)
             .then(response => response.json())
             .then(async (data) => {
                 console.log(`response data length: ${data.content.length}`);
