@@ -38,7 +38,7 @@ export function useApi<T> ({endpoint, method}: UseApiProps) {
 
 export function useGetAllPublications() {
     const {makeRequest, isLoading, data} = useApi<IPublication[]>({
-        endpoint: `${BASE_URL}/publication/all`,
+        endpoint: `${BASE_URL}/publication`,
         method: 'GET'
     });
     return {makeRequest, isLoading, data};

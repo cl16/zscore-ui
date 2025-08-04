@@ -1,11 +1,11 @@
 export function handleFormValue(arg: FormDataEntryValue | null) {
     if (arg) {
         if (arg === '') {
-            return null;
+            return undefined;
         } else {
             return arg.toString();
         }
     } else {
-        return null;
+        return undefined;
     }
 }
