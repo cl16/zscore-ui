@@ -1,5 +1,5 @@
 import {useState} from "react";
-import type {IPublication} from "../types/interfaces.ts";
+import type {IGame, IPublication} from "../types/interfaces.ts";
 import type {UrlParams} from "./request-types.ts";
 
 const BASE_URL = 'http://localhost:8080';
@@ -15,7 +15,7 @@ function makeQuery(params: UrlParams) {
         .join('&')
 }
 
-export function useApi<T> ({endpoint, method}: UseApiProps) {
+function useApi<T> ({endpoint, method}: UseApiProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState<T | null>(null);
     const [error, setError] = useState(false);
@@ -23,16 +23,20 @@ export function useApi<T> ({endpoint, method}: UseApiProps) {
     const makeRequest = async (params?: UrlParams)=> {
         setIsLoading(true);
         const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-        await sleep(6000); // sleep to test loading state
+        await sleep(2000); // sleep to test loading state
+
         const url = endpoint + (params ? '?' + makeQuery(params) : '');
         console.log(`REQUEST: ${url}`);
 
         await fetch(url, {method})
             .then(async response => {
                 console.log(`RESPONSE: ${response.status}`);
-                const responseData = (await response.json()).content;
-                setIsLoading(false);
-                setData(responseData);
+                if (response.status == 200 || response.status == 404) {
+                    setIsLoading(false);
+                    setData((await response.json()).content);
+                } else {
+                    setError(true);
+                }
             })
             .catch(error => {
                 console.log(error);
@@ -50,3 +54,14 @@ export function useGetPublicationsByParams() {
     });
     return {makeRequest, isLoading, data, error};
 }
+
+export function useGetGamesByParams() {
+    const {makeRequest, isLoading, data, error} = useApi<IGame>({
+        endpoint: `${BASE_URL}/game`,
+        method: 'GET'
+    });
+    return {makeRequest, isLoading, data, error};
+}
+
+
+
