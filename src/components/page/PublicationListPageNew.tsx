@@ -4,13 +4,15 @@ import {type FormEvent, useState} from "react";
 
 export function PublicationListPageNew() {
 
-    const [isPreQuery, setIsPreQuery] = useState(true);
-
-    const {formData, handleFormDataChange} = useFormData({
+    const DEFAULT_FORM = {
         nameContains: '',
         minScoreAvg: '',
         maxScoreAvg: ''
-    });
+    };
+
+    const [isPreQuery, setIsPreQuery] = useState(true);
+
+    const {formData, handleFormDataChange} = useFormData(DEFAULT_FORM);
 
     const {makeRequest, isLoading, data: pageData, error: isError} = useGetPublicationsByParams();
 
