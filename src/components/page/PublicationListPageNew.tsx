@@ -1,25 +1,18 @@
-import {useState} from "react";
-
-
-function useInputState() {
-    const [value, setValue] = useState('');
-
-    function handleValueChange(e) {
-        setValue(e.target.value);
-    }
-
-    return {value, handleValueChange}
-}
+import {useFormData} from "../../helper/use-form-hook.ts";
 
 export function PublicationListPageNew() {
 
-    const {value: searchString, handleValueChange: handleSearchStringChange} = useInputState();
-    const {value: other, handleValueChange: handleOtherChange} = useInputState();
+    const {formData, handleFormDataChange} = useFormData({
+        searchString: '',
+        minScoreAvg: '',
+        maxScoreAvg: ''
+    });
 
     function handleFormSubmit() {
-        console.log('FORM');
-        console.log(`searchString: ${searchString}`);
-        console.log(`other: ${other}`);
+        const entries = Object.entries(formData);
+        for (const entry of entries) {
+            console.log(`${entry[0]}: ${entry[1]}`);
+        }
     }
 
     return (
@@ -29,14 +22,19 @@ export function PublicationListPageNew() {
                 <form action={handleFormSubmit}>
                     <div>
                         <label>Search</label>
-                        <input id={'search-string'} name={'search-string'} className={'text-input'} type={'textbox'} value={searchString} onChange={handleSearchStringChange}/>
+                        <input id={'searchString'} name={'searchString'} className={'text-input'} type={'textbox'} value={formData.searchString} onChange={handleFormDataChange}/>
                     </div>
                     <div>
-                        <label>Other</label>
-                        <input id={'other'} name={'other'} className={'text-input'} type={'textbox'} value={other} onChange={handleOtherChange}/>
+                        <label>Min Score Avg</label>
+                        <input id={'minScoreAvg'} name={'minScoreAvg'} className={'text-input'} type={'textbox'} value={formData.minScoreAvg} onChange={handleFormDataChange}/>
+                    </div>
+                    <div>
+                        <label>Max Score Avg</label>
+                        <input id={'maxScoreAvg'} name={'maxScoreAvg'} className={'text-input'} type={'textbox'} value={formData.maxScoreAvg} onChange={handleFormDataChange}/>
                     </div>
                     <button type={'submit'}>Apply</button>
                 </form>
+
             </div>
         </>
     )
