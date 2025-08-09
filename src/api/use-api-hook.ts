@@ -11,9 +11,12 @@ type UseApiProps = {
 
 function makeQuery(params: UrlParams) {
     return Object.entries(params)
+        .filter(obj => obj[1] && obj[1] != null && obj[1] != '')
         .map(obj => `${obj[0]}=${obj[1]}`)
         .join('&')
 }
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 function useApi<T> ({endpoint, method}: UseApiProps) {
     const [isLoading, setIsLoading] = useState(false);
@@ -21,9 +24,10 @@ function useApi<T> ({endpoint, method}: UseApiProps) {
     const [error, setError] = useState(false);
 
     const makeRequest = async (params?: UrlParams)=> {
+        setError(false);
         setIsLoading(true);
-        const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-        await sleep(2000); // sleep to test loading state
+
+        await sleep(500); // sleep to test loading state
 
         const url = endpoint + (params ? '?' + makeQuery(params) : '');
         console.log(`REQUEST: ${url}`);
@@ -35,6 +39,7 @@ function useApi<T> ({endpoint, method}: UseApiProps) {
                     setIsLoading(false);
                     setData((await response.json()).content);
                 } else {
+                    setIsLoading(false);
                     setError(true);
                 }
             })

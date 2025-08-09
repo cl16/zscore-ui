@@ -1,28 +1,38 @@
 import {useFormData} from "../../helper/use-form-hook.ts";
+import {useGetPublicationsByParams} from "../../api/use-api-hook.ts";
+import {type FormEvent, useState} from "react";
 
 export function PublicationListPageNew() {
 
+    const [isPreQuery, setIsPreQuery] = useState(true);
+
     const {formData, handleFormDataChange} = useFormData({
-        searchString: '',
+        nameContains: '',
         minScoreAvg: '',
         maxScoreAvg: ''
     });
 
-    function handleFormSubmit() {
+    const {makeRequest, isLoading, data: pageData, error: isError} = useGetPublicationsByParams();
+
+    async function handleFormSubmit(event: FormEvent) {
+        // must stop the browser from reloading the page on form submit
+        event.preventDefault();
+        setIsPreQuery(false);
         const entries = Object.entries(formData);
         for (const entry of entries) {
             console.log(`${entry[0]}: ${entry[1]}`);
         }
+        await makeRequest(formData);
     }
 
     return (
         <>
             <div className={'page-body-main'}>
 
-                <form action={handleFormSubmit}>
+                <form onSubmit={handleFormSubmit}>
                     <div>
                         <label>Search</label>
-                        <input id={'searchString'} name={'searchString'} className={'text-input'} type={'textbox'} value={formData.searchString} onChange={handleFormDataChange}/>
+                        <input id={'searchString'} name={'nameContains'} className={'text-input'} type={'textbox'} value={formData.searchString} onChange={handleFormDataChange}/>
                     </div>
                     <div>
                         <label>Min Score Avg</label>
@@ -35,6 +45,18 @@ export function PublicationListPageNew() {
                     <button type={'submit'}>Apply</button>
                 </form>
 
+                <div>
+                    {
+                        isPreQuery ? 'Choose query parameters' :
+                        isLoading ? 'Loading ...' : (
+                            isError ? 'An error occurred. Please modify query or try again.' : (
+                            pageData === null || pageData.length === 0 ? 'No matching results ...' :
+                                pageData.map(row => {
+                                    return <div key={row.pubId}>{row.name}</div>
+                                })
+                        ))
+                    }
+                </div>
             </div>
         </>
     )
