@@ -1,5 +1,5 @@
 export interface IPagingAndSortingParams {
-    page?: number;
+    page?: string | number; // TODO: make just string once everything made consistent
     size?: string;
     sort?: string;
 }

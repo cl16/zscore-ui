@@ -1,4 +1,4 @@
-import {useFormData} from "../../helper/use-form-hook.ts";
+import {usePaginatingFormData} from "../../helper/use-form-hook.ts";
 import {useGetPublicationsByParams} from "../../api/use-api-hook.ts";
 import {type FormEvent, useState} from "react";
 
@@ -7,12 +7,18 @@ export function PublicationListPageNew() {
     const DEFAULT_FORM = {
         nameContains: '',
         minScoreAvg: '',
-        maxScoreAvg: ''
+        maxScoreAvg: '',
+        page: '1'
     };
 
     const [isPreQuery, setIsPreQuery] = useState(true);
-
-    const {formData, handleFormDataChange} = useFormData(DEFAULT_FORM);
+    const {
+        formData,
+        handleFormDataChange,
+        incrementPage,
+        decrementPage,
+        setTotalPages
+    } = usePaginatingFormData(DEFAULT_FORM);
 
     const {makeRequest, isLoading, data: pageData, error: isError} = useGetPublicationsByParams();
 
@@ -26,7 +32,7 @@ export function PublicationListPageNew() {
         }
         await makeRequest(formData);
     }
-
+    console.log(`Page: ${formData.page}`)
     return (
         <>
             <div className={'page-body-main'}>
@@ -34,7 +40,7 @@ export function PublicationListPageNew() {
                 <form onSubmit={handleFormSubmit}>
                     <div>
                         <label>Search</label>
-                        <input id={'searchString'} name={'nameContains'} className={'text-input'} type={'textbox'} value={formData.searchString} onChange={handleFormDataChange}/>
+                        <input id={'searchString'} name={'nameContains'} className={'text-input'} type={'textbox'} value={formData.nameContains} onChange={handleFormDataChange}/>
                     </div>
                     <div>
                         <label>Min Score Avg</label>
@@ -45,6 +51,11 @@ export function PublicationListPageNew() {
                         <input id={'maxScoreAvg'} name={'maxScoreAvg'} className={'text-input'} type={'textbox'} value={formData.maxScoreAvg} onChange={handleFormDataChange}/>
                     </div>
                     <button type={'submit'}>Apply</button>
+                    <div>
+                        <label>Page</label>
+                        <input id={'page'} name={'page'} className={'text-input'} type={'textbox'} value={formData.page} onChange={handleFormDataChange}/>
+                        <button onClick={incrementPage} type={'button'}>Next</button>
+                    </div>
                 </form>
 
                 <div>
