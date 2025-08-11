@@ -1,6 +1,7 @@
 import {usePaginatingFormData} from "../../helper/use-form-hook.ts";
 import {useGetPublicationsByParams} from "../../api/use-api-hook.ts";
-import {type FormEvent, useState} from "react";
+import {type FormEvent} from "react";
+import {useEffectGetPublicationsByParams} from "../../api/use-api-effect-hook.ts";
 
 export function PublicationListPageNew() {
 
@@ -11,28 +12,25 @@ export function PublicationListPageNew() {
         page: '1'
     };
 
-    const [isPreQuery, setIsPreQuery] = useState(true);
     const {
         formData,
         handleFormDataChange,
         incrementPage,
-        decrementPage,
-        setTotalPages
+        decrementPage
     } = usePaginatingFormData(DEFAULT_FORM);
 
-    const {makeRequest, isLoading, data: pageData, error: isError} = useGetPublicationsByParams();
+    const {setParams, isLoading, data: pageData, error: isError} = useEffectGetPublicationsByParams(DEFAULT_FORM);
 
-    async function handleFormSubmit(event: FormEvent) {
+    function handleFormSubmit(event: FormEvent) {
         // must stop the browser from reloading the page on form submit
         event.preventDefault();
-        setIsPreQuery(false);
         const entries = Object.entries(formData);
         for (const entry of entries) {
             console.log(`${entry[0]}: ${entry[1]}`);
         }
-        await makeRequest(formData);
+        setParams(formData);
     }
-    console.log(`Page: ${formData.page}`)
+
     return (
         <>
             <div className={'page-body-main'}>
@@ -52,22 +50,24 @@ export function PublicationListPageNew() {
                     </div>
                     <button type={'submit'}>Apply</button>
                     <div>
-                        <label>Page</label>
+                        <span>Page</span>
                         <input id={'page'} name={'page'} className={'text-input'} type={'textbox'} value={formData.page} onChange={handleFormDataChange}/>
-                        <button onClick={incrementPage} type={'button'}>Next</button>
+                        <span>of {pageData?.totalPages || '1'}</span>
+                        <button onClick={decrementPage} type={'button'}>Prev</button>
+                        <button onClick={() => incrementPage(pageData?.totalPages || 1)} type={'button'}>Next</button>
                     </div>
                 </form>
 
                 <div>
                     {
-                        isPreQuery ? 'Choose query parameters' :
                         isLoading ? 'Loading ...' : (
                             isError ? 'An error occurred. Please modify query or try again.' : (
-                            pageData === null || pageData.length === 0 ? 'No matching results ...' :
-                                pageData.map(row => {
-                                    return <div key={row.pubId}>{row.name}</div>
-                                })
-                        ))
+                                pageData === null || pageData.content.length === 0 ? 'No matching results ...' :
+                                    pageData.content.map(row => {
+                                        return <div key={row.pubId}>{row.name}</div>
+                                    })
+                            )
+                        )
                     }
                 </div>
             </div>
