@@ -1,7 +1,6 @@
 import {usePaginatingFormData} from "../../helper/use-form-hook.ts";
-import {useGetPublicationsByParams} from "../../api/use-api-hook.ts";
 import {type FormEvent} from "react";
-import {useEffectGetPublicationsByParams} from "../../api/use-api-effect-hook.ts";
+import {useGetPublicationsByParams} from "../../api/use-api-hook.ts";
 
 export function PublicationListPageNew() {
 
@@ -19,7 +18,7 @@ export function PublicationListPageNew() {
         decrementPage
     } = usePaginatingFormData(DEFAULT_FORM);
 
-    const {setParams, isLoading, data: pageData, error: isError} = useEffectGetPublicationsByParams(DEFAULT_FORM);
+    const {setParams, isLoading, data: pageData, error: isError} = useGetPublicationsByParams(DEFAULT_FORM);
 
     function handleFormSubmit(event: FormEvent) {
         // must stop the browser from reloading the page on form submit
