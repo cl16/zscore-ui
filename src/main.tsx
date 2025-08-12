@@ -5,9 +5,10 @@ import App from './App.tsx'
 import {BrowserRouter as Router} from "react-router-dom";
 
 createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-        <Router>
-            <App />
-        </Router>
-    </StrictMode>
+    /*<StrictMode>
+
+    </StrictMode>*/
+    <Router>
+        <App />
+    </Router>
 )

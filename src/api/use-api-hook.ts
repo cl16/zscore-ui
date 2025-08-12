@@ -13,7 +13,7 @@ type UseApiProps = {
     method: 'GET' | 'POST';
 }
 
-function makeQuery(params: UrlParams) {
+export function makeQuery(params: UrlParams) {
     // make copy and convert 1-indexed page value to 0-indexed value for API/db
     const copiedParams = {...params};
     if (copiedParams.page) {
@@ -25,11 +25,11 @@ function makeQuery(params: UrlParams) {
         .join('&')
 }
 
-function useApi<T>({endpoint, method}: UseApiProps, initialParams: UrlParams) {
+function useApi<T>({endpoint, method}: UseApiProps, params: UrlParams) {
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState<IApiResponseJson<T> | null>(null);
     const [error, setError] = useState(false);
-    const [params, setParams] = useState(initialParams)
+    // const [params, setParams] = useState(initialParams)
 
     useEffect(() => {
         setError(false);
@@ -58,21 +58,21 @@ function useApi<T>({endpoint, method}: UseApiProps, initialParams: UrlParams) {
 
     }, [params]);
 
-    return {setParams, data, isLoading, error};
+    return {data, isLoading, error};
 }
 
 export function useGetPublicationsByParams(initialParams: UrlParams) {
-    const {setParams, data, isLoading, error} = useApi<IPublication>({
+    const {data, isLoading, error} = useApi<IPublication>({
         endpoint: `${BASE_URL}/publication`,
         method: 'GET'
     }, initialParams);
-    return {setParams, isLoading, data, error};
+    return {isLoading, data, error};
 }
 
 export function useGetGamesByParams(initialParams: UrlParams) {
-    const {setParams, isLoading, data, error} = useApi<IGame>({
+    const {isLoading, data, error} = useApi<IGame>({
         endpoint: `${BASE_URL}/game`,
         method: 'GET'
     }, initialParams);
-    return {setParams, isLoading, data, error};
+    return {isLoading, data, error};
 }

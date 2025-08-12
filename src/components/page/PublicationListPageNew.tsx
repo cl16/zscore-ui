@@ -18,7 +18,7 @@ export function PublicationListPageNew() {
         decrementPage
     } = usePaginatingFormData(DEFAULT_FORM);
 
-    const {setParams, isLoading, data: pageData, error: isError} = useGetPublicationsByParams(DEFAULT_FORM);
+    const {isLoading, data: pageData, error: isError} = useGetPublicationsByParams(formData);
 
     function handleFormSubmit(event: FormEvent) {
         // must stop the browser from reloading the page on form submit
@@ -27,8 +27,19 @@ export function PublicationListPageNew() {
         for (const entry of entries) {
             console.log(`${entry[0]}: ${entry[1]}`);
         }
-        setParams(formData);
+        // setParams(formData);
     }
+
+    // replace this in the onClick for next page button: () => incrementPage(pageData?.totalPages || 1)
+    function testPageIncr(event: FormEvent) {
+        console.log(`non-updated page value would be: ${Number(formData.page) - 1}`);
+        const newFormData = {...formData, page: Number(formData.page) + 1};
+
+        // setParams(newFormData);
+        // incrementPage(pageData?.totalPages || 1);
+        // handleFormSubmit(event)
+    }
+
 
     return (
         <>
