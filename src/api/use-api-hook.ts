@@ -66,7 +66,7 @@ export function useGetPublicationsByParams(initialParams: UrlParams) {
         endpoint: `${BASE_URL}/publication`,
         method: 'GET'
     }, initialParams);
-    return {isLoading, data, error};
+    return {data, isLoading, error};
 }
 
 export function useGetGamesByParams(initialParams: UrlParams) {
@@ -74,5 +74,5 @@ export function useGetGamesByParams(initialParams: UrlParams) {
         endpoint: `${BASE_URL}/game`,
         method: 'GET'
     }, initialParams);
-    return {isLoading, data, error};
+    return {data, isLoading, error};
 }

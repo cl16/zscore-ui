@@ -1,16 +1,11 @@
-import {type ChangeEvent, useState} from "react";
+import {type ChangeEvent, type FormEvent, useState} from "react";
 
-interface IPaginatingFormData {
-    page: string;
-}
+export interface IPaginatingFormData { page: number; }
+type StringProperties<T> = { [K in keyof T]: K extends 'page' ? number : string }
 
-interface StringFormData {
-    [key: string]: string;
-}
-
-// the type T needs to have "page" property but also explicitly match StringFormData so no narrowing is possible (?)
-export function usePaginatingFormData<T extends IPaginatingFormData & StringFormData>(initial: T) {
+export function usePaginatingFormData<T extends IPaginatingFormData & StringProperties<T>>(initial: T) {
     const [formData, setFormData] = useState(initial);
+    const [queryData, setQueryData] = useState(initial);
 
     function handleFormDataChange(e: ChangeEvent<HTMLInputElement>) {
         const label = e.target.name as keyof T;
@@ -18,25 +13,43 @@ export function usePaginatingFormData<T extends IPaginatingFormData & StringForm
     }
 
     function incrementPage(totalPages: number) {
-        let pageAsNumber = Number(formData.page);
-        if (pageAsNumber < totalPages) {
-            pageAsNumber += 1;
-            setFormData({...formData, page: String(pageAsNumber)});
+        if (formData.page < totalPages) {
+            const newFormData = {...formData, page: formData.page + 1};
+            setFormData(newFormData);
+            setQueryData(newFormData);
         }
     }
 
     function decrementPage() {
-        let pageAsNumber = Number(formData.page);
-        if (pageAsNumber > 1) {
-            pageAsNumber -= 1;
-            setFormData({...formData, page: String(pageAsNumber)});
+        if (formData.page > 1) {
+            const newFormData = {...formData, page: formData.page - 1};
+            setFormData(newFormData);
+            setQueryData(newFormData);
         }
+    }
+
+    function submitForm(event: FormEvent) {
+        event.preventDefault();
+        const newFormData = {...formData}
+        if (formData.page === queryData.page) {
+            newFormData.page = 1;
+        }
+        setFormData(newFormData);
+        setQueryData(newFormData);
+    }
+
+    function resetForm() {
+        setFormData(initial);
+        setQueryData(initial);
     }
 
     return {
         formData,
+        queryData,
         handleFormDataChange,
+        submitForm,
         incrementPage,
-        decrementPage
+        decrementPage,
+        resetForm,
     };
 }

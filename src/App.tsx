@@ -12,7 +12,7 @@ import GamePage from "./components/page/GamePage.tsx";
 import PublicationPage from "./components/page/PublicationPage.tsx";
 import ScoreListPage from "./components/page/ScoreListPage.tsx";
 import {useEffect} from "react";
-import {PublicationListPageV3} from "./components/page/PublicationListPageV3.tsx";
+import {PublicationListPageV4} from "./components/page/PublicationListPageV4.tsx";
 
 function App() {
 
@@ -27,7 +27,7 @@ function App() {
             <Header activePage={location.pathname} />
             <Routes>
                 <Route path="/" element={ <HomePage /> }/>
-                <Route path="/publication" element={ <PublicationListPageV3 /> }/>
+                <Route path="/publication" element={ <PublicationListPageV4 /> }/>
                 <Route path="/game" element={ <GameListPage /> }/>
                 <Route path="/score" element={ <ScoreListPage /> }/>
                 <Route path="/publication/:pubId" element={ <PublicationPage /> }/>
