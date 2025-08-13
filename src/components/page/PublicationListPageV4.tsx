@@ -1,5 +1,7 @@
 import {useGetPublicationsByParams} from "../../api/use-api-hook.ts";
 import {type IPaginatingFormData, usePaginatingFormData} from "../../helper/use-form-hook.ts";
+import DataTable from "../table/DataTable.tsx";
+import type {IPublication} from "../../types/interfaces.ts";
 
 interface IPublicationListPageForm extends IPaginatingFormData {
     nameContains: string,
@@ -17,7 +19,8 @@ export function PublicationListPageV4() {
         maxScoreAvg: '',
         minScoreStd: '',
         maxScoreStd: '',
-        page: 1
+        page: 1,
+        sort: ''
     };
 
     const {
@@ -27,8 +30,9 @@ export function PublicationListPageV4() {
         submitForm,
         incrementPage,
         decrementPage,
-        resetForm
-    } = usePaginatingFormData<IPublicationListPageForm>(DEFAULT_FORM);
+        resetForm,
+        sortByColumn
+    } = usePaginatingFormData<IPublicationListPageForm, IPublication>(DEFAULT_FORM);
     const {data: pageData, isLoading, error: isError} = useGetPublicationsByParams(queryData);
 
     return (
@@ -61,10 +65,22 @@ export function PublicationListPageV4() {
                     {
                         isLoading ? 'Loading...' :
                             isError ? 'An error occurred!' :
-                        pageData === null || pageData.content.length === 0 ? 'No matching results ...' :
-                            pageData.content.map(row => {
-                                return <div key={row.pubId}>{row.name}</div>
-                            })
+                                pageData === null || pageData.content.length === 0 ? 'No matching results ...' :
+                                    <div className={'table-container page-tl-container'}>
+                                        <DataTable<IPublication> content={pageData.content} config={{
+                                            columns: [
+                                                {key: 'name', external: 'Name'},
+                                                {key: 'scoreAvg', external: 'Score Average'},
+                                                {key: 'scoreStd', external: 'Score Standard Deviation'}
+                                            ],
+                                            idString: 'pubId',
+                                            sortConfig: {
+                                                sortCol: formData.sort ? formData.sort.split(',')[0] as keyof IPublication : null,
+                                                sortDir: !(['', null].includes(formData.sort)) ? formData.sort.split(',')[1] === 'desc' ? 'desc' : 'asc' : 'asc',
+                                                toggleSortCol: sortByColumn
+                                            }
+                                        }}/>
+                                    </div>
                     }
                 </div>
             </div>
