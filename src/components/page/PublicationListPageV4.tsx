@@ -5,6 +5,8 @@ interface IPublicationListPageForm extends IPaginatingFormData {
     nameContains: string,
     minScoreAvg: string,
     maxScoreAvg: string,
+    minScoreStd: string,
+    maxScoreStd: string,
 }
 
 export function PublicationListPageV4() {
@@ -13,6 +15,8 @@ export function PublicationListPageV4() {
         nameContains: '',
         minScoreAvg: '',
         maxScoreAvg: '',
+        minScoreStd: '',
+        maxScoreStd: '',
         page: 1
     };
 
@@ -27,7 +31,6 @@ export function PublicationListPageV4() {
     } = usePaginatingFormData<IPublicationListPageForm>(DEFAULT_FORM);
     const {data: pageData, isLoading, error: isError} = useGetPublicationsByParams(queryData);
 
-    console.log('component called!');
     return (
         <>
             <div className={'page-body-main'}>
@@ -39,6 +42,10 @@ export function PublicationListPageV4() {
                         <input name={'minScoreAvg'} className={'text-input'} type={'textbox'} value={formData.minScoreAvg} onChange={handleFormDataChange}/>
                         <label>Max Score Avg</label>
                         <input name={'maxScoreAvg'} className={'text-input'} type={'textbox'} value={formData.maxScoreAvg} onChange={handleFormDataChange}/>
+                        <label>Min Score Std Dev</label>
+                        <input name={'minScoreStd'} className={'text-input'} type={'textbox'} value={formData.minScoreStd} onChange={handleFormDataChange}/>
+                        <label>Max Score Std Dev</label>
+                        <input name={'maxScoreStd'} className={'text-input'} type={'textbox'} value={formData.maxScoreStd} onChange={handleFormDataChange}/>
                     </div>
                     <button type={'submit'}>Submit</button>
                     <button type={'button'} onClick={resetForm}>Reset</button>
