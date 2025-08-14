@@ -1,9 +1,9 @@
 import {useGetPublicationsByParams} from "../../api/use-api-hook.ts";
-import {type IPaginatingFormData, usePaginatingFormData} from "../../helper/use-form-hook.ts";
+import {type IPagingAndSortingForm, usePagingAndSortingForm} from "../../helper/use-form-hook.ts";
 import DataTable from "../table/DataTable.tsx";
 import type {IPublication} from "../../types/interfaces.ts";
 
-interface IPublicationListPageForm extends IPaginatingFormData {
+interface IPublicationListPageForm extends IPagingAndSortingForm {
     nameContains: string,
     minScoreAvg: string,
     maxScoreAvg: string,
@@ -32,7 +32,7 @@ export function PublicationListPageV4() {
         decrementPage,
         resetForm,
         sortByColumn
-    } = usePaginatingFormData<IPublicationListPageForm, IPublication>(DEFAULT_FORM);
+    } = usePagingAndSortingForm<IPublicationListPageForm, IPublication>(DEFAULT_FORM);
     const {data: pageData, isLoading, error: isError} = useGetPublicationsByParams(queryData);
 
     return (
@@ -76,7 +76,7 @@ export function PublicationListPageV4() {
                                             idString: 'pubId',
                                             sortConfig: {
                                                 sortCol: formData.sort ? formData.sort.split(',')[0] as keyof IPublication : null,
-                                                sortDir: !(['', null].includes(formData.sort)) ? formData.sort.split(',')[1] === 'desc' ? 'desc' : 'asc' : 'asc',
+                                                sortDir: formData.sort ? formData.sort.split(',')[1] as 'asc' | 'desc' : null,
                                                 toggleSortCol: sortByColumn
                                             }
                                         }}/>

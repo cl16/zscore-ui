@@ -1,4 +1,4 @@
-import {usePaginatingFormData} from "../../helper/use-form-hook.ts";
+import {usePagingAndSortingForm} from "../../helper/use-form-hook.ts";
 import {type FormEvent} from "react";
 import {useGetPublicationsByParams} from "../../api/use-api-hook.ts";
 
@@ -16,7 +16,7 @@ export function PublicationListPageNew() {
         handleFormDataChange,
         incrementPage,
         decrementPage
-    } = usePaginatingFormData(DEFAULT_FORM);
+    } = usePagingAndSortingForm(DEFAULT_FORM);
 
     const {isLoading, data: pageData, error: isError} = useGetPublicationsByParams(formData);
 

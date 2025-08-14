@@ -24,7 +24,7 @@ export interface IStatReview {
 
 export interface ITableSortConfig<T> {
     sortCol: keyof T | null;
-    sortDir: 'asc' | 'desc';
+    sortDir: 'asc' | 'desc' | null;
     toggleSortCol: (col: keyof T) => void;
 }
 

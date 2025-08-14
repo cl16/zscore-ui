@@ -1,16 +1,16 @@
 export interface IPagingAndSortingParams {
-    page?: string | number; // TODO: make just string once everything made consistent
+    page: string | number; // TODO: make just number once everything made consistent
     size?: string;
-    sort?: string;
+    sort: string | null;
 }
 
 export interface IPublicationParams extends IPagingAndSortingParams {
-    minScoreStd?: string;
-    maxScoreStd?: string;
-    minScoreAvg?: string;
-    maxScoreAvg?: string;
-    name?: string;
-    nameContains?: string;
+    minScoreStd: string;
+    maxScoreStd: string;
+    minScoreAvg: string;
+    maxScoreAvg: string;
+    name?: string;  // TODO: determine if really ever used - probably not, remove?
+    nameContains: string;
 }
 
 export interface IGameParams extends IPagingAndSortingParams {

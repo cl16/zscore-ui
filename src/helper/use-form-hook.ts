@@ -1,17 +1,20 @@
 import {type ChangeEvent, type FormEvent, useState} from "react";
 import type {Entity} from "../types/types.ts";
 
-export interface IPaginatingFormData {
+export interface IPagingAndSortingForm {
     page: number,
-    sort: string
+    sort: string | null
 }
-type StringProperties<T> = { [K in keyof T]: K extends 'page' ? number : string }
+type StringProperties<T> = { [K in keyof T]: K extends 'page' ? number : K extends 'sort' ? string | null : string }
 
-export function usePaginatingFormData<T extends IPaginatingFormData & StringProperties<T>, K extends Entity>(initial: T) {
+/**
+ * Use a custom hook for a form extending IPagingAndSortingForm with additional arbitrary form parameters as string
+ * values. Provides functions for pagination and sort configuration.
+ * @param initial
+ */
+export function usePagingAndSortingForm<T extends IPagingAndSortingForm & StringProperties<T>, K extends Entity>(initial: T) {
     const [formData, setFormData] = useState(initial);
     const [queryData, setQueryData] = useState(initial);
-    const [sortCol, setSortCol] = useState<keyof K | null>(null);
-    const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
 
     function handleFormDataChange(e: ChangeEvent<HTMLInputElement>) {
         const label = e.target.name as keyof T;
@@ -35,10 +38,11 @@ export function usePaginatingFormData<T extends IPaginatingFormData & StringProp
     }
 
     function submitForm(event: FormEvent) {
-        event.preventDefault();
+        event.preventDefault(); // prevent browser from reloading full page on form submission
         const newFormData = {...formData}
         if (formData.page === queryData.page) {
             newFormData.page = 1;
+            newFormData.sort = null;
         }
         setFormData(newFormData);
         setQueryData(newFormData);
@@ -50,20 +54,17 @@ export function usePaginatingFormData<T extends IPaginatingFormData & StringProp
     }
 
     function sortByColumn(column: keyof K) {
+        const [sortCol, sortDir] = formData.sort ? formData.sort.split(',') : [null, null];
         if (sortCol != column) {
             const newFormData = {...formData, sort: `${column as string},asc`, page: 1}
-            setSortCol(column);
-            setSortDir('asc');
             setFormData(newFormData);
             setQueryData(newFormData);
         } else if (sortDir === 'asc') {
             const newFormData = {...formData, sort: `${column as string},desc`, page: 1}
-            setSortDir('desc');
             setFormData(newFormData);
             setQueryData(newFormData);
         } else {
             const newFormData = {...formData, sort: null, page: 1}
-            setSortCol(null);
             setFormData(newFormData);
             setQueryData(newFormData);
         }
