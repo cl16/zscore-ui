@@ -3,9 +3,7 @@ import {useEffect, useState} from "react";
 import type {IApiResponseJson} from "./request-interfaces.ts";
 import type {IGame, IPublication} from "../types/interfaces.ts";
 
-
-const BASE_URL = 'http://localhost:8080';
-
+// TODO: remove this sleep, used only for testing states set by useApi()
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 type UseApiProps = {
@@ -13,8 +11,8 @@ type UseApiProps = {
     method: 'GET' | 'POST';
 }
 
-export function makeQuery(params: UrlParams) {
-    // make copy and convert 1-indexed page value to 0-indexed value for API/db
+export function buildUrlQuery(params: UrlParams) {
+    // make copy and convert 1-indexed page value to 0-indexed value as API format
     const copiedParams = {...params};
     if (copiedParams.page) {
         copiedParams.page = String(Number(copiedParams.page) - 1);
@@ -29,16 +27,13 @@ function useApi<T>({endpoint, method}: UseApiProps, params: UrlParams) {
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState<IApiResponseJson<T> | null>(null);
     const [error, setError] = useState(false);
-    // const [params, setParams] = useState(initialParams)
 
     useEffect(() => {
         setError(false);
         setIsLoading(true);
-
         sleep(500).then(() => {
-            const url = endpoint + (params ? '?' + makeQuery(params) : '');
+            const url = import.meta.env.VITE_API_BASE_URL + endpoint + (params ? '?' + buildUrlQuery(params) : '');
             console.log(`REQUEST: ${url}`);
-
             fetch(url, {method})
                 .then(async response => {
                     console.log(`RESPONSE: ${response.status}`);
@@ -55,7 +50,6 @@ function useApi<T>({endpoint, method}: UseApiProps, params: UrlParams) {
                     setError(true);
                 });
         });
-
     }, [params]);
 
     return {data, isLoading, error};
@@ -63,7 +57,7 @@ function useApi<T>({endpoint, method}: UseApiProps, params: UrlParams) {
 
 export function useGetPublicationsByParams(initialParams: UrlParams) {
     const {data, isLoading, error} = useApi<IPublication>({
-        endpoint: `${BASE_URL}/publication`,
+        endpoint: `publication`,
         method: 'GET'
     }, initialParams);
     return {data, isLoading, error};
@@ -71,7 +65,7 @@ export function useGetPublicationsByParams(initialParams: UrlParams) {
 
 export function useGetGamesByParams(initialParams: UrlParams) {
     const {isLoading, data, error} = useApi<IGame>({
-        endpoint: `${BASE_URL}/game`,
+        endpoint: `game`,
         method: 'GET'
     }, initialParams);
     return {data, isLoading, error};
