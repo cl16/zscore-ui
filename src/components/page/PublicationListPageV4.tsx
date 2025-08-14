@@ -59,29 +59,31 @@ export function PublicationListPageV4() {
                         <span> of {pageData?.totalPages || 1}</span>
                         <button onClick={decrementPage} type={'button'}>Prev</button>
                         <button onClick={() => incrementPage(pageData?.totalPages || 1)} type={'button'}>Next</button>
+                        <span> {pageData?.totalElements || 0} total results</span>
                     </div>
                 </form>
                 <div>
-                    {
-                        isLoading ? 'Loading...' :
-                            isError ? 'An error occurred!' :
-                                pageData === null || pageData.content.length === 0 ? 'No matching results ...' :
-                                    <div className={'table-container page-tl-container'}>
-                                        <DataTable<IPublication> content={pageData.content} config={{
-                                            columns: [
-                                                {key: 'name', external: 'Name'},
-                                                {key: 'scoreAvg', external: 'Score Average'},
-                                                {key: 'scoreStd', external: 'Score Standard Deviation'}
-                                            ],
-                                            idString: 'pubId',
-                                            sortConfig: {
-                                                sortCol: formData.sort ? formData.sort.split(',')[0] as keyof IPublication : null,
-                                                sortDir: formData.sort ? formData.sort.split(',')[1] as 'asc' | 'desc' : null,
-                                                toggleSortCol: sortByColumn
-                                            }
-                                        }}/>
-                                    </div>
-                    }
+                    <div className={'table-container page-tl-container'}>
+                        {
+                            isLoading ? <div>Loading ...</div> :
+                                isError ? <div>An error occurred! Please try again or try another query.</div> :
+                                    pageData === null || pageData.content.length === 0 ? <div>Nothing to see here ...</div> :
+
+                                            <DataTable<IPublication> content={pageData.content} config={{
+                                                columns: [
+                                                    {key: 'name', external: 'Name'},
+                                                    {key: 'scoreAvg', external: 'Score Average'},
+                                                    {key: 'scoreStd', external: 'Score Standard Deviation'}
+                                                ],
+                                                idString: 'pubId',
+                                                sortConfig: {
+                                                    sortCol: formData.sort ? formData.sort.split(',')[0] as keyof IPublication : null,
+                                                    sortDir: formData.sort ? formData.sort.split(',')[1] as 'asc' | 'desc' : null,
+                                                    toggleSortCol: sortByColumn
+                                                }
+                                            }}/>
+                        }
+                    </div>
                 </div>
             </div>
         </>
