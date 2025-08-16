@@ -12,7 +12,7 @@ import GamePage from "./components/page/GamePage.tsx";
 import PublicationPage from "./components/page/PublicationPage.tsx";
 import ScoreListPage from "./components/page/ScoreListPage.tsx";
 import {useEffect} from "react";
-import {PublicationListPage} from "./components/page/PublicationListPage.tsx";
+import PublicationListPage from "./components/page/PublicationListPage.tsx";
 
 function App() {
 

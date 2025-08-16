@@ -11,7 +11,7 @@ interface IPublicationListPageForm extends IPagingAndSortingForm {
     maxScoreStd: string,
 }
 
-export function PublicationListPage() {
+function PublicationListPage() {
 
     const DEFAULT_FORM = {
         nameContains: '',
@@ -89,3 +89,5 @@ export function PublicationListPage() {
         </>
     )
 }
+
+export default PublicationListPage;

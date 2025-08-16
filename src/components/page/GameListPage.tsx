@@ -1,155 +1,75 @@
-import {useEffect, useState} from "react";
-import Api from "../../api/api.tsx";
 import type {IGame} from "../../types/interfaces.ts";
-import type {SortDir} from "../../types/types.ts";
-import type {IGameParams} from "../../api/request-interfaces.ts";
 import DataTable from "../table/DataTable.tsx";
-import {handleFormValue} from "../../helper/page-data.tsx";
+import {type IPagingAndSortingForm, usePagingAndSortingForm} from "../../helper/use-form-hook.ts";
+import {useGetGamesByParams} from "../../api/use-api-hook.ts";
+
+interface IGameListPageForm extends IPagingAndSortingForm {
+    titleContains: string;
+}
 
 function GameListPage() {
 
-    const [tableData, setTableData] = useState<IGame[]>([]);
-    const [page, setPage] = useState<number>(1);
-    const [pageInput, setPageInput] = useState(String(page));
-    const [totalPages, setTotalPages] = useState(0);
-    const [searchKey, setSearchKey] = useState<string | null>(null);
-    const [sortCol, setSortCol] = useState<keyof IGame | null>(null);
-    const [sortDir, setSortDir] = useState<SortDir>('asc');
-    const DEFAULT_PAGE_STATE = {
+    const DEFAULT_FORM = {
+        titleContains: '',
         page: 1,
-        totalPages: 0,
-        searchKey: null,
-        pageInput: '1'
+        sort: ''
     }
 
-    useEffect(() => {
-        requestAndSetData();
-    }, [page, searchKey, sortCol, sortDir]);
-
-    function applyUserArgs(formData: FormData) {
-        const pageArg = handleFormValue(formData.get('page'));
-        const searchKeyArg = handleFormValue(formData.get('search-key'))
-
-        // If no user args have changed state, consider page arg only
-        if (searchKeyArg === searchKey) {
-            const pageValueToSet = (pageArg === '' || pageArg === '0' || !pageArg || Number(pageArg) > totalPages) ? 1 : Number(pageArg);
-            setPageMaster(pageValueToSet);
-        }
-        // If any user arg has changed state, re-set page to first page and apply new user-requested state
-        else {
-            setPageMaster(1);
-            setSearchKey(searchKeyArg);
-            setSortCol(null);
-        }
-    }
-
-    function buildParams() : IGameParams {
-        const params: IGameParams = {};
-        if (page) {
-            params.page = page - 1; // pagination 0-indexed in API
-        }
-        if (sortCol) {
-            params.sort = `${sortCol},${sortDir}`;
-        }
-        if (searchKey) {
-            params.titleContains = searchKey;
-        }
-        return params;
-    }
-
-    function requestAndSetData() {
-        const params: IGameParams = buildParams();
-        Api.getGamesByParams(params)
-            .then(response => response.json())
-            .then(async (data) => {
-                setTableData(data.content);
-                setTotalPages(data.totalPages);
-            })
-            .catch(error => console.log(error));
-    }
-
-    function resetPageState() {
-        setPage(DEFAULT_PAGE_STATE.page);
-        setSearchKey(DEFAULT_PAGE_STATE.searchKey);
-        setPageInput(DEFAULT_PAGE_STATE.pageInput);
-        setSortCol(null);
-    }
-
-    function nextPage() {
-        const current = Number(page);
-        const total = Number(totalPages);
-        if (current < total) {
-            setPageMaster(current + 1);
-        }
-    }
-
-    function prevPage() {
-        const current = Number(page);
-        if (current > 1) {
-            setPageMaster(current - 1);
-        }
-    }
-
-    function setPageMaster(n: number) {
-        setPage(n);
-        setPageInput(String(n));
-    }
-
-    function sortByColumn(column: keyof IGame | null) {
-        if (sortCol != column) {
-            setSortCol(column as keyof IGame | null);
-            setSortDir('asc');
-        } else if (sortDir === 'asc') {
-            toggleSortDir();
-        } else {
-            setSortCol(null);
-        }
-        setPageMaster(1);
-    }
-
-    function toggleSortDir() {
-        if (sortDir === 'asc') {
-            setSortDir('desc');
-        } else {
-            setSortDir('asc');
-        }
-    }
+    const {
+        formData,
+        queryData,
+        handleFormDataChange,
+        submitForm,
+        incrementPage,
+        decrementPage,
+        resetForm,
+        sortByColumn
+    } = usePagingAndSortingForm<IGameListPageForm, IGame>(DEFAULT_FORM);
+    const {data: pageData, isLoading, error: isError} = useGetGamesByParams(queryData);
 
     return (
         <>
             <div className={'page-body-main'}>
 
-                <form action={applyUserArgs}>
+                <form onSubmit={submitForm}>
                     <div className={'search-filter-container page-tl-container'}>
                         <div className={'search-container page-ml-container'}>
-                            <label htmlFor={'game-list-search'}>Search</label>
-                            <input id={'game-list-search'} name={'search-key'} className={'text-input'} type={'textbox'} defaultValue={searchKey || undefined}/>
-                            <button type={'submit'}>Apply</button>
-                            <button type={'reset'} onClick={resetPageState}>Clear</button>
+                            <label>Title Contains</label>
+                            <input name={'titleContains'} className={'text-input'} type={'textbox'} defaultValue={formData.titleContains} onChange={handleFormDataChange}/>
+                            <button type={'submit'}>Submit</button>
+                            <button type={'reset'} onClick={resetForm}>Reset</button>
                         </div>
                     </div>
                     <div className={'pagination-container'}>
                         <span>Page </span>
-                        <input id={'pub-list-page-number'} name={'page'} className={'text-input'} type={'textbox'} value={pageInput} onChange={e => setPageInput(e.target.value)}/>
+                        <input id={'pub-list-page-number'} name={'page'} className={'text-input'} type={'textbox'} value={formData.page} onChange={e => setPageInput(e.target.value)}/>
                         <span> of </span>
-                        <span className={'total-page-number'}>{totalPages}</span>
-                        <button type={'button'} onClick={prevPage}>Prev</button>
-                        <button type={'button'} onClick={nextPage}>Next</button>
+                        <span className={'total-page-number'}>{pageData?.totalPages || 1}</span>
+                        <button type={'button'} onClick={decrementPage}>Prev</button>
+                        <button type={'button'} onClick={() => incrementPage(pageData?.totalPages || 1)}>Next</button>
+                        <span> {pageData?.totalElements || 0} total results</span>
                     </div>
                 </form>
 
                 <div className={'table-container page-tl-container'}>
-                    <DataTable<IGame> content={tableData} config={{
-                        columns: [
-                            {key: 'title', external: 'Title'}
-                        ],
-                        idString: 'gameId',
-                        sortConfig: {
-                            sortCol: sortCol,
-                            sortDir: sortDir,
-                            toggleSortCol: sortByColumn
-                        }
-                    }}/>
+
+                    {
+                        isLoading ? <div>Loading ...</div> :
+                            isError ? <div>An error occurred! Please try again or try another query.</div> :
+                                pageData === null || pageData.content.length === 0 ? <div>Nothing to see here ...</div> :
+
+                                    <DataTable<IGame> content={pageData.content} config={{
+                                        columns: [
+                                            {key: 'title', external: 'Title'}
+                                        ],
+                                        idString: 'gameId',
+                                        sortConfig: {
+                                            sortCol: formData.sort ? formData.sort.split(',')[0] as keyof IGame : null,
+                                            sortDir: formData.sort ? formData.sort.split(',')[1] as 'asc' | 'desc' : null,
+                                            toggleSortCol: sortByColumn
+                                        }
+                                    }}/>
+                    }
                 </div>
             </div>
         </>

@@ -1,4 +1,5 @@
-import type {IPublicationParams} from "./request-interfaces.ts";
+import type {IPublicationParams, IGameParams} from "./request-interfaces.ts";
 
 export type UrlParams =
-    | IPublicationParams;
+    | IPublicationParams
+    | IGameParams;
