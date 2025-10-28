@@ -57,8 +57,8 @@ function PublicationListPage() {
                         <span>Page </span>
                         <input name={'page'} className={'text-input'} type={'textbox'} value={formData.page} onChange={handleFormDataChange}/>
                         <span> of {pageData?.totalPages || 1}</span>
-                        <button onClick={decrementPage} type={'button'}>Prev</button>
-                        <button onClick={() => incrementPage(pageData?.totalPages || 1)} type={'button'}>Next</button>
+                        <button type={'button'} onClick={decrementPage}>Prev</button>
+                        <button type={'button'} onClick={() => incrementPage(pageData?.totalPages || 1)}>Next</button>
                         <span> {pageData?.totalElements || 0} total results</span>
                     </div>
                 </form>

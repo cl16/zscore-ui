@@ -18,12 +18,14 @@ export function usePagingAndSortingForm<T extends IPagingAndSortingForm & String
 
     function handleFormDataChange(e: ChangeEvent<HTMLInputElement>) {
         const label = e.target.name as keyof T;
-        setFormData({...formData, [label]: e.target.value as T[keyof T]});
+        const newData = {...formData, [label]: e.target.value as StringProperties<T>[keyof T]};
+        setFormData(newData);
     }
 
     function incrementPage(totalPages: number) {
-        if (formData.page < totalPages) {
-            const newFormData = {...formData, page: formData.page + 1};
+        const formDataPageNum = Number(formData.page);
+        if (formDataPageNum < totalPages) {
+            const newFormData = {...formData, page: formDataPageNum + 1};
             setFormData(newFormData);
             setQueryData(newFormData);
         }

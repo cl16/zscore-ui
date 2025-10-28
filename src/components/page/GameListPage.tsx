@@ -42,9 +42,8 @@ function GameListPage() {
                     </div>
                     <div className={'pagination-container'}>
                         <span>Page </span>
-                        <input id={'pub-list-page-number'} name={'page'} className={'text-input'} type={'textbox'} value={formData.page} onChange={e => setPageInput(e.target.value)}/>
-                        <span> of </span>
-                        <span className={'total-page-number'}>{pageData?.totalPages || 1}</span>
+                        <input name={'page'} className={'text-input'} type={'textbox'} value={formData.page} onChange={handleFormDataChange}/>
+                        <span> of {pageData?.totalPages || 1}</span>
                         <button type={'button'} onClick={decrementPage}>Prev</button>
                         <button type={'button'} onClick={() => incrementPage(pageData?.totalPages || 1)}>Next</button>
                         <span> {pageData?.totalElements || 0} total results</span>
@@ -52,7 +51,6 @@ function GameListPage() {
                 </form>
 
                 <div className={'table-container page-tl-container'}>
-
                     {
                         isLoading ? <div>Loading ...</div> :
                             isError ? <div>An error occurred! Please try again or try another query.</div> :
