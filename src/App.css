@@ -75,6 +75,11 @@ input.text-input {
     margin: 5px;
 }
 
+input.text-input-invalid {
+    margin: 5px;
+    border: 2px solid red;
+}
+
 .table-container {
 
 }
