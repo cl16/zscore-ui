@@ -5,7 +5,7 @@ export interface IPagingAndSortingForm {
     page: number,
     sort: string | null
 }
-type StringProperties<T> = { [K in keyof T]: K extends 'page' ? number : K extends 'sort' ? string | null : string }
+type StringProperties<T> = { [K in keyof T]: string }
 
 function validate(pattern: string, value: string) {
     return new RegExp(pattern).test(value);
@@ -62,9 +62,9 @@ export function usePagingAndSortingForm<T extends StringProperties<T>, K extends
     }
 
     function resetForm() {
-        setFormData(initial);
+        setFormData(initialFormData);
         setFormValidity(newFormValidity(initial));
-        setQueryData(formData); // formData adds page/sort to initial, must be formData
+        setQueryData(initialFormData); // initialFormData adds page/sort to initial, must be formData
     }
 
     function sortByColumn(column: keyof K) {
