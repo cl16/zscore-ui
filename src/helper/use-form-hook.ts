@@ -7,95 +7,86 @@ export interface IPagingAndSortingForm {
 }
 type StringProperties<T> = { [K in keyof T]: K extends 'page' ? number : K extends 'sort' ? string | null : string }
 
-function reduceFormToQuery(formData) {
-    return Object.fromEntries(
-        Object.keys(formData).map(key => [key, formData[key]['value']])
-    )
-}
-
 function validate(pattern: string, value: string) {
     return new RegExp(pattern).test(value);
+}
+
+function newFormValidity<T extends StringProperties<T>>(initial: T) {
+    return Object.fromEntries(Object.keys(initial).map(key => [key, true]))
 }
 
 /**
  * Use a custom hook for a form extending IPagingAndSortingForm with additional arbitrary form parameters as string
  * values. Provides functions for pagination and sort configuration.
- * @param baseForm
+ * @param
  */
-export function usePagingAndSortingForm<T extends StringProperties<T>, K extends Entity>(baseForm: T) {
-    const initial = {
-        ...Object.fromEntries(
-            Object.entries(baseForm).map(([key, val]) => [
-                key,
-                {value: val.defaultValue, valid: true}
-            ])
-        ),
-        page: {value: 1, valid: true},
-        sort: {value: null, valid: true}
-    };
-    const [formData, setFormData] = useState(initial);
-    const [queryData, setQueryData] = useState(reduceFormToQuery(initial));
+export function usePagingAndSortingForm<T extends StringProperties<T>, K extends Entity>(initial: T, patterns: T) {
+    const initialFormData: IPagingAndSortingForm & StringProperties<T> = {...initial, page: 1, sort: null};
+    const [formData, setFormData] = useState(initialFormData);
+    const [formValidity, setFormValidity] = useState(newFormValidity(initial));
+    const [queryData, setQueryData] = useState(formData);
 
     function handleFormDataChange(e: ChangeEvent<HTMLInputElement>) {
         const label = e.target.name as keyof T;
         const newValue = e.target.value as StringProperties<T>[keyof T];
-        const validationPattern = baseForm[label]['validationPattern'];
-        const newData = {...formData, [label]: {value: newValue, valid: validate(validationPattern, newValue)}};
-        setFormData(newData);
+        setFormData({...formData, [label]: newValue});
+        setFormValidity({...formValidity, [label]: validate(patterns[label], newValue)})
     }
 
     function incrementPage(totalPages: number) {
-        const formDataPageNum = Number(formData.page.value);
+        const formDataPageNum = Number(formData.page);
         if (formDataPageNum < totalPages) {
-            const newFormData = {...formData, page: {value: formDataPageNum + 1, valid: true}};
+            const newFormData = {...formData, page: formDataPageNum + 1};
             setFormData(newFormData);
-            setQueryData(reduceFormToQuery(newFormData));
+            setQueryData(newFormData);
         }
     }
 
     function decrementPage() {
-        if (formData.page.value > 1) {
-            const newFormData = {...formData, page: {value: formData.page.value - 1, valid: true}};
+        if (formData.page > 1) {
+            const newFormData = {...formData, page: formData.page - 1};
             setFormData(newFormData);
-            setQueryData(reduceFormToQuery(newFormData));
+            setQueryData(newFormData);
         }
     }
 
     function submitForm(event: FormEvent) {
         event.preventDefault(); // prevent browser from reloading full page on form submission
         const newFormData = {...formData}
-        if (formData.page.value === queryData.page) {
-            newFormData.page.value = 1;
-            newFormData.sort.value = null;
+        if (formData.page === queryData.page) {
+            newFormData.page = 1;
+            newFormData.sort = null;
         }
         setFormData(newFormData);
-        setQueryData(reduceFormToQuery(newFormData));
+        setQueryData(newFormData);
     }
 
     function resetForm() {
         setFormData(initial);
-        setQueryData(reduceFormToQuery(initial));
+        setFormValidity(newFormValidity(initial));
+        setQueryData(formData); // formData adds page/sort to initial, must be formData
     }
 
     function sortByColumn(column: keyof K) {
-        const [sortCol, sortDir] = formData.sort.value ? formData.sort.value.split(',') : [null, null];
+        const [sortCol, sortDir] = formData.sort ? formData.sort.split(',') : [null, null];
         if (sortCol != column) {
-            const newFormData = {...formData, sort: {value: `${column as string},asc`, valid: true}, page: {value: 1, valid: true}}
+            const newFormData = {...formData, sort: `${column as string},asc`, page: 1}
             setFormData(newFormData);
-            setQueryData(reduceFormToQuery(newFormData));
+            setQueryData(newFormData);
         } else if (sortDir === 'asc') {
             const newFormData = {...formData, sort: `${column as string},desc`, page: 1}
             setFormData(newFormData);
-            setQueryData(reduceFormToQuery(newFormData));
+            setQueryData(newFormData);
         } else {
             const newFormData = {...formData, sort: null, page: 1}
             setFormData(newFormData);
-            setQueryData(reduceFormToQuery(newFormData));
+            setQueryData(newFormData);
         }
     }
 
     return {
         formData,
+        formValidity,
         queryData,
         handleFormDataChange,
         submitForm,
