@@ -25,10 +25,10 @@ function PublicationListPage() {
 
     const formPatterns = {
         nameContains: InputValidation.ANY,
-        minScoreAvg: InputValidation.NUMBER,
-        maxScoreAvg: InputValidation.NUMBER,
-        minScoreStd: InputValidation.NUMBER,
-        maxScoreStd: InputValidation.NUMBER
+        minScoreAvg: InputValidation.NUMBER_ZERO_TO_ONE_HUNDRED,
+        maxScoreAvg: InputValidation.NUMBER_ZERO_TO_ONE_HUNDRED,
+        minScoreStd: InputValidation.NUMBER_ZERO_TO_ONE_HUNDRED,
+        maxScoreStd: InputValidation.NUMBER_ZERO_TO_ONE_HUNDRED
     }
 
     const {
