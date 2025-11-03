@@ -1,9 +1,11 @@
 import {useGetPublicationsByParams} from "../../api/use-api-hook.ts";
-import {type IPagingAndSortingForm, usePagingAndSortingForm} from "../../helper/use-form-hook.ts";
+import {usePagingAndSortingForm} from "../../helper/use-form-hook.ts";
 import DataTable from "../table/DataTable.tsx";
 import type {IPublication} from "../../types/interfaces.ts";
+import {extractPatterns, InputValidation} from "../../helper/input-validation-patterns.ts";
+import {useEffect} from "react";
 
-interface IPublicationListPageForm extends IPagingAndSortingForm {
+interface IPublicationListPageForm {
     nameContains: string,
     minScoreAvg: string,
     maxScoreAvg: string,
@@ -18,40 +20,70 @@ function PublicationListPage() {
         minScoreAvg: '',
         maxScoreAvg: '',
         minScoreStd: '',
-        maxScoreStd: '',
-        page: 1,
-        sort: ''
+        maxScoreStd: ''
     };
+
+    const formPatterns = {
+        nameContains: InputValidation.ANY,
+        minScoreAvg: InputValidation.NUMBER_ZERO_TO_ONE_HUNDRED,
+        maxScoreAvg: InputValidation.NUMBER_ZERO_TO_ONE_HUNDRED,
+        minScoreStd: InputValidation.NUMBER_ZERO_TO_ONE_HUNDRED,
+        maxScoreStd: InputValidation.NUMBER_ZERO_TO_ONE_HUNDRED
+    }
 
     const {
         formData,
+        formValidity,
         queryData,
         handleFormDataChange,
         submitForm,
         incrementPage,
         decrementPage,
+        setMaxPage,
         resetForm,
         sortByColumn
-    } = usePagingAndSortingForm<IPublicationListPageForm, IPublication>(DEFAULT_FORM);
+    } = usePagingAndSortingForm<IPublicationListPageForm, IPublication>(
+        DEFAULT_FORM,
+        extractPatterns(formPatterns)
+    );
     const {data: pageData, isLoading, error: isError} = useGetPublicationsByParams(queryData);
+
+    useEffect(() => {
+        setMaxPage(pageData?.totalPages || 1);
+    }, [pageData?.totalPages, setMaxPage])
 
     return (
         <>
             <div className={'page-body-main'}>
                 <form onSubmit={submitForm}>
                     <div>
-                        <label>Name Contains</label>
-                        <input name={'nameContains'} className={'text-input'} type={'textbox'} value={formData.nameContains} onChange={handleFormDataChange}/>
-                        <label>Min Score Avg</label>
-                        <input name={'minScoreAvg'} className={'text-input'} type={'textbox'} value={formData.minScoreAvg} onChange={handleFormDataChange}/>
-                        <label>Max Score Avg</label>
-                        <input name={'maxScoreAvg'} className={'text-input'} type={'textbox'} value={formData.maxScoreAvg} onChange={handleFormDataChange}/>
-                        <label>Min Score Std Dev</label>
-                        <input name={'minScoreStd'} className={'text-input'} type={'textbox'} value={formData.minScoreStd} onChange={handleFormDataChange}/>
-                        <label>Max Score Std Dev</label>
-                        <input name={'maxScoreStd'} className={'text-input'} type={'textbox'} value={formData.maxScoreStd} onChange={handleFormDataChange}/>
+                        <div>
+                            <label>Name Contains</label>
+                            <input name={'nameContains'} className={formValidity.nameContains ? 'text-input' : 'text-input-invalid'} type={'textbox'} value={formData.nameContains} onChange={handleFormDataChange}/>
+                            {formValidity.nameContains ? null : <span>formPatterns.nameContains</span>}
+                        </div>
+                        <div>
+                            <label>Min Score Avg</label>
+                            <input name={'minScoreAvg'} className={formValidity.minScoreAvg ? 'text-input' : 'text-input-invalid'} type={'textbox'} value={formData.minScoreAvg} onChange={handleFormDataChange}/>
+                            {formValidity.minScoreAvg ? null: <span>{formPatterns.minScoreAvg.desc}</span>}
+                        </div>
+                        <div>
+                            <label>Max Score Avg</label>
+                            <input name={'maxScoreAvg'} className={formValidity.maxScoreAvg ? 'text-input' : 'text-input-invalid'} type={'textbox'} value={formData.maxScoreAvg} onChange={handleFormDataChange}/>
+                            {formValidity.maxScoreAvg ? null: <span>{formPatterns.maxScoreAvg.desc}</span>}
+                        </div>
+                        <div>
+                            <label>Min Score Std Dev</label>
+                            <input name={'minScoreStd'} className={formValidity.minScoreStd ? 'text-input' : 'text-input-invalid'} type={'textbox'} value={formData.minScoreStd} onChange={handleFormDataChange}/>
+                            {formValidity.minScoreStd ? null: <span>{formPatterns.minScoreStd.desc}</span>}
+                        </div>
+                        <div>
+                            <label>Max Score Std Dev</label>
+                            <input name={'maxScoreStd'} className={formValidity.maxScoreStd ? 'text-input' : 'text-input-invalid'} type={'textbox'} value={formData.maxScoreStd} onChange={handleFormDataChange}/>
+                            {formValidity.maxScoreStd ? null: <span>{formPatterns.maxScoreStd.desc}</span>}
+                        </div>
                     </div>
-                    <button type={'submit'}>Submit</button>
+                    <button type={'submit'} disabled={Object.values(formValidity).some((valid) => !valid)}>Submit</button>
                     <button type={'button'} onClick={resetForm}>Reset</button>
                     <div>
                         <span>Page </span>

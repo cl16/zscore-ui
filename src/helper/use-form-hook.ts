@@ -1,25 +1,51 @@
 import {type ChangeEvent, type FormEvent, useState} from "react";
 import type {Entity} from "../types/types.ts";
+import {InputValidation} from "./input-validation-patterns.ts";
 
 export interface IPagingAndSortingForm {
     page: number,
     sort: string | null
 }
-type StringProperties<T> = { [K in keyof T]: K extends 'page' ? number : K extends 'sort' ? string | null : string }
+type StringProperties<T> = { [K in keyof T]: string }
+
+function validate(pattern: string, value: string) {
+    return new RegExp(pattern).test(value);
+}
+
+function newFormValidity<T extends StringProperties<T>>(initial: T) {
+    const validity = Object.fromEntries(Object.keys(initial).map(key => [key, true]));
+    validity['page'] = true;
+    return validity;
+}
 
 /**
  * Use a custom hook for a form extending IPagingAndSortingForm with additional arbitrary form parameters as string
  * values. Provides functions for pagination and sort configuration.
- * @param initial
+ * @param
  */
-export function usePagingAndSortingForm<T extends IPagingAndSortingForm & StringProperties<T>, K extends Entity>(initial: T) {
-    const [formData, setFormData] = useState(initial);
-    const [queryData, setQueryData] = useState(initial);
+export function usePagingAndSortingForm<T extends StringProperties<T>, K extends Entity>(initial: T, patterns: T) {
+    const initialFormData: IPagingAndSortingForm & StringProperties<T> = {...initial, page: 1, sort: null};
+    const [formData, setFormData] = useState(initialFormData);
+    const [formValidity, setFormValidity] = useState(newFormValidity(initial));
+    const [queryData, setQueryData] = useState(formData);
+    const [maxPage, setMaxPage] = useState(1);
 
     function handleFormDataChange(e: ChangeEvent<HTMLInputElement>) {
-        const label = e.target.name as keyof T;
-        const newData = {...formData, [label]: e.target.value as StringProperties<T>[keyof T]};
-        setFormData(newData);
+        const label = e.target.name as keyof T & {page: number};
+        const newValue = e.target.value as StringProperties<T>[keyof T] & {page: number};
+        if (label === 'page') {
+            if (!validate(InputValidation.INTEGER.pattern, newValue)) {
+                setFormData({...formData, page: newValue});
+                setFormValidity({...formValidity, page: false});
+            } else {
+                const numberValue = Number(newValue);
+                setFormData({...formData, page: numberValue});
+                setFormValidity({...formValidity, page: numberValue > 0 && numberValue <= maxPage});
+            }
+        } else {
+            setFormData({...formData, [label]: newValue});
+            setFormValidity({...formValidity, [label]: validate(patterns[label], newValue)})
+        }
     }
 
     function incrementPage(totalPages: number) {
@@ -51,8 +77,9 @@ export function usePagingAndSortingForm<T extends IPagingAndSortingForm & String
     }
 
     function resetForm() {
-        setFormData(initial);
-        setQueryData(initial);
+        setFormData(initialFormData);
+        setFormValidity(newFormValidity(initial));
+        setQueryData(initialFormData); // initialFormData adds page/sort to initial, must be formData
     }
 
     function sortByColumn(column: keyof K) {
@@ -74,11 +101,13 @@ export function usePagingAndSortingForm<T extends IPagingAndSortingForm & String
 
     return {
         formData,
+        formValidity,
         queryData,
         handleFormDataChange,
         submitForm,
         incrementPage,
         decrementPage,
+        setMaxPage,
         resetForm,
         sortByColumn
     };
