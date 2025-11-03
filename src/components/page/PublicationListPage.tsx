@@ -46,6 +46,7 @@ function PublicationListPage() {
         DEFAULT_FORM,
         extractPatterns(formPatterns)
     );
+
     const {data: pageData, isLoading, error: isError} = useGetPublicationsByParams(queryData);
 
     useEffect(() => {
@@ -87,7 +88,7 @@ function PublicationListPage() {
                     <button type={'button'} onClick={resetForm}>Reset</button>
                     <div>
                         <span>Page </span>
-                        <input name={'page'} className={'text-input'} type={'textbox'} value={formData.page} onChange={handleFormDataChange}/>
+                        <input name={'page'} className={formValidity.page ? 'text-input' : 'text-input-invalid'} type={'textbox'} value={formData.page} onChange={handleFormDataChange}/>
                         <span> of {pageData?.totalPages || 1}</span>
                         <button type={'button'} onClick={decrementPage}>Prev</button>
                         <button type={'button'} onClick={() => incrementPage(pageData?.totalPages || 1)}>Next</button>
