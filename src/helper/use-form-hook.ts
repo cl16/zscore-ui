@@ -1,5 +1,6 @@
 import {type ChangeEvent, type FormEvent, useState} from "react";
 import type {Entity} from "../types/types.ts";
+import {InputValidation} from "./input-validation-patterns.ts";
 
 export interface IPagingAndSortingForm {
     page: number,
@@ -12,7 +13,9 @@ function validate(pattern: string, value: string) {
 }
 
 function newFormValidity<T extends StringProperties<T>>(initial: T) {
-    return Object.fromEntries(Object.keys(initial).map(key => [key, true]))
+    const validity = Object.fromEntries(Object.keys(initial).map(key => [key, true]));
+    validity['page'] = true;
+    return validity;
 }
 
 /**
@@ -25,12 +28,24 @@ export function usePagingAndSortingForm<T extends StringProperties<T>, K extends
     const [formData, setFormData] = useState(initialFormData);
     const [formValidity, setFormValidity] = useState(newFormValidity(initial));
     const [queryData, setQueryData] = useState(formData);
+    const [maxPage, setMaxPage] = useState(1);
 
     function handleFormDataChange(e: ChangeEvent<HTMLInputElement>) {
-        const label = e.target.name as keyof T;
-        const newValue = e.target.value as StringProperties<T>[keyof T];
-        setFormData({...formData, [label]: newValue});
-        setFormValidity({...formValidity, [label]: validate(patterns[label], newValue)})
+        const label = e.target.name as keyof T & {page: number};
+        const newValue = e.target.value as StringProperties<T>[keyof T] & {page: number};
+        if (label === 'page') {
+            if (!validate(InputValidation.INTEGER.pattern, newValue)) {
+                setFormData({...formData, page: newValue});
+                setFormValidity({...formValidity, page: false});
+            } else {
+                const numberValue = Number(newValue);
+                setFormData({...formData, page: numberValue});
+                setFormValidity({...formValidity, page: numberValue > 0 && numberValue <= maxPage});
+            }
+        } else {
+            setFormData({...formData, [label]: newValue});
+            setFormValidity({...formValidity, [label]: validate(patterns[label], newValue)})
+        }
     }
 
     function incrementPage(totalPages: number) {
@@ -92,6 +107,7 @@ export function usePagingAndSortingForm<T extends StringProperties<T>, K extends
         submitForm,
         incrementPage,
         decrementPage,
+        setMaxPage,
         resetForm,
         sortByColumn
     };

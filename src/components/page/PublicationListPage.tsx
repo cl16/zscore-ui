@@ -3,6 +3,7 @@ import {usePagingAndSortingForm} from "../../helper/use-form-hook.ts";
 import DataTable from "../table/DataTable.tsx";
 import type {IPublication} from "../../types/interfaces.ts";
 import {extractPatterns, InputValidation} from "../../helper/input-validation-patterns.ts";
+import {useEffect} from "react";
 
 interface IPublicationListPageForm {
     nameContains: string,
@@ -38,6 +39,7 @@ function PublicationListPage() {
         submitForm,
         incrementPage,
         decrementPage,
+        setMaxPage,
         resetForm,
         sortByColumn
     } = usePagingAndSortingForm<IPublicationListPageForm, IPublication>(
@@ -45,6 +47,10 @@ function PublicationListPage() {
         extractPatterns(formPatterns)
     );
     const {data: pageData, isLoading, error: isError} = useGetPublicationsByParams(queryData);
+
+    useEffect(() => {
+        setMaxPage(pageData?.totalPages || 1);
+    }, [pageData?.totalPages, setMaxPage])
 
     return (
         <>

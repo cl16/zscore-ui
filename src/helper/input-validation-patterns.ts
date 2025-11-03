@@ -6,6 +6,7 @@ interface ITextInputPattern {
 export class InputValidation {
     static ANY: ITextInputPattern = {pattern: '^.*$', desc: 'any character'};
     static NUMBER: ITextInputPattern = {pattern: '^([0-9]+(\\.[0-9]+)?)?$', desc: 'integer or decimal number'};
+    static INTEGER: ITextInputPattern = {pattern: '^[0-9]+$', desc: 'integer'};
 }
 
 export function extractPatterns<T extends Record<string, { pattern: string }>>(obj: T): { [K in keyof T]: string } {
