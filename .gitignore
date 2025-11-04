@@ -3,6 +3,9 @@ public/
 node_modules/
 .env
 
+# Copilot
+.github/
+
 # Logs
 logs
 *.log

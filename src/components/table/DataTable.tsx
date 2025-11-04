@@ -39,7 +39,7 @@ function DataTable<T>(
                     })}
                 </tr>
             </thead>
-            <tbody>
+            <tbody className={'tbody-scrollable'}>
                 {content.map((row) => {
                     return (
                         <tr key={String(row[config.idString])} className={'data-table-row'}>

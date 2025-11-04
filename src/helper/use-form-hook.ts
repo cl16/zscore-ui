@@ -4,7 +4,8 @@ import {InputValidation} from "./input-validation-patterns.ts";
 
 export interface IPagingAndSortingForm {
     page: number,
-    sort: string | null
+    sort: string | null,
+    size: number
 }
 type StringProperties<T> = { [K in keyof T]: string }
 
@@ -24,13 +25,13 @@ function newFormValidity<T extends StringProperties<T>>(initial: T) {
  * @param
  */
 export function usePagingAndSortingForm<T extends StringProperties<T>, K extends Entity>(initial: T, patterns: T) {
-    const initialFormData: IPagingAndSortingForm & StringProperties<T> = {...initial, page: 1, sort: null};
+    const initialFormData: IPagingAndSortingForm & StringProperties<T> = {...initial, page: 1, sort: null, size: 100};
     const [formData, setFormData] = useState(initialFormData);
     const [formValidity, setFormValidity] = useState(newFormValidity(initial));
     const [queryData, setQueryData] = useState(formData);
     const [maxPage, setMaxPage] = useState(1);
 
-    function handleFormDataChange(e: ChangeEvent<HTMLInputElement>) {
+    function handleFormDataChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>) {
         const label = e.target.name as keyof T & {page: number};
         const newValue = e.target.value as StringProperties<T>[keyof T] & {page: number};
         if (label === 'page') {

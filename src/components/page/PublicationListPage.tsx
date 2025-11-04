@@ -4,6 +4,7 @@ import DataTable from "../table/DataTable.tsx";
 import type {IPublication} from "../../types/interfaces.ts";
 import {extractPatterns, InputValidation} from "../../helper/input-validation-patterns.ts";
 import {useEffect} from "react";
+import Select from "../Select.tsx";
 
 interface IPublicationListPageForm {
     nameContains: string,
@@ -94,30 +95,40 @@ function PublicationListPage() {
                         <button type={'button'} onClick={() => incrementPage(pageData?.totalPages || 1)}>Next</button>
                         <span> {pageData?.totalElements || 0} total results</span>
                     </div>
-                </form>
-                <div>
-                    <div className={'table-container page-tl-container'}>
-                        {
-                            isLoading ? <div>Loading ...</div> :
-                                isError ? <div>An error occurred! Please try again or try another query.</div> :
-                                    pageData === null || pageData.content.length === 0 ? <div>Nothing to see here ...</div> :
 
-                                            <DataTable<IPublication> content={pageData.content} config={{
-                                                columns: [
-                                                    {key: 'name', external: 'Name'},
-                                                    {key: 'scoreAvg', external: 'Score Average'},
-                                                    {key: 'scoreStd', external: 'Score Standard Deviation'}
-                                                ],
-                                                idString: 'pubId',
-                                                sortConfig: {
-                                                    sortCol: formData.sort ? formData.sort.split(',')[0] as keyof IPublication : null,
-                                                    sortDir: formData.sort ? formData.sort.split(',')[1] as 'asc' | 'desc' : null,
-                                                    toggleSortCol: sortByColumn
-                                                }
-                                            }}/>
-                        }
+                    <Select values={[20, 50, 100]} defaultValue={formData?.size || 20} onChangeFunc={handleFormDataChange}/>
+                    <div>
+                        <span>Showing </span>
+                        <span>{((queryData?.page - 1) * queryData?.size) + 1} - {Math.min((queryData?.page * queryData?.size), pageData?.totalElements || 0)}</span>
+                        <span> of </span>
+                        <span>{pageData?.totalElements}</span>
+                        <span> results</span>
                     </div>
+
+                </form>
+
+                <div className={'table-container page-tl-container'}>
+                    {
+                        isLoading ? <div>Loading ...</div> :
+                            isError ? <div>An error occurred! Please try again or try another query.</div> :
+                                pageData === null || pageData.content.length === 0 ? <div>Nothing to see here ...</div> :
+
+                                        <DataTable<IPublication> content={pageData.content} config={{
+                                            columns: [
+                                                {key: 'name', external: 'Name'},
+                                                {key: 'scoreAvg', external: 'Score Average'},
+                                                {key: 'scoreStd', external: 'Score Standard Deviation'}
+                                            ],
+                                            idString: 'pubId',
+                                            sortConfig: {
+                                                sortCol: formData.sort ? formData.sort.split(',')[0] as keyof IPublication : null,
+                                                sortDir: formData.sort ? formData.sort.split(',')[1] as 'asc' | 'desc' : null,
+                                                toggleSortCol: sortByColumn
+                                            }
+                                        }}/>
+                    }
                 </div>
+
             </div>
         </>
     )
