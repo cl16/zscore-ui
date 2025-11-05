@@ -28,18 +28,18 @@ function DataTable<T>(
 
     return (
         <table className={'data-table'}>
-            <thead>
-                <tr>
+            <thead className={'data-table-head'}>
+                <tr className={'data-table-head-row'}>
                     {config.columns.map((col, i) => {
                         return (
                             <th key={String(col.key)} className={headerClasses[i]}>
-                                <button onClick={() => config.sortConfig.toggleSortCol(col.key)}>{columnLabels[i]}</button>
+                                <button className={'data-table-col-sort-button'} onClick={() => config.sortConfig.toggleSortCol(col.key)}>{columnLabels[i]}</button>
                             </th>
                         )
                     })}
                 </tr>
             </thead>
-            <tbody className={'tbody-scrollable'}>
+            <tbody className={'data-table-body tbody-scrollable'}>
                 {content.map((row) => {
                     return (
                         <tr key={String(row[config.idString])} className={'data-table-row'}>

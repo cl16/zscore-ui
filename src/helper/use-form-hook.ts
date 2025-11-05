@@ -2,12 +2,17 @@ import {type ChangeEvent, type FormEvent, useState} from "react";
 import type {Entity} from "../types/types.ts";
 import {InputValidation} from "./input-validation-patterns.ts";
 
-export interface IPagingAndSortingForm {
+const DEFAULT_PAGE_NUMBER = 1;
+const DEFAULT_SORT_COLUMN = null;
+const DEFAULT_PAGE_SIZE = 20;
+
+type StringProperties<T> = { [K in keyof T]: string }
+
+interface IPagingAndSortingForm {
     page: number,
     sort: string | null,
     size: number
 }
-type StringProperties<T> = { [K in keyof T]: string }
 
 function validate(pattern: string, value: string) {
     return new RegExp(pattern).test(value);
@@ -22,10 +27,16 @@ function newFormValidity<T extends StringProperties<T>>(initial: T) {
 /**
  * Use a custom hook for a form extending IPagingAndSortingForm with additional arbitrary form parameters as string
  * values. Provides functions for pagination and sort configuration.
- * @param
+ * @param initial
+ * @param patterns
  */
 export function usePagingAndSortingForm<T extends StringProperties<T>, K extends Entity>(initial: T, patterns: T) {
-    const initialFormData: IPagingAndSortingForm & StringProperties<T> = {...initial, page: 1, sort: null, size: 100};
+    const initialFormData: IPagingAndSortingForm & StringProperties<T> = {
+        ...initial,
+        page: DEFAULT_PAGE_NUMBER,
+        sort: DEFAULT_SORT_COLUMN,
+        size: DEFAULT_PAGE_SIZE
+    };
     const [formData, setFormData] = useState(initialFormData);
     const [formValidity, setFormValidity] = useState(newFormValidity(initial));
     const [queryData, setQueryData] = useState(formData);
@@ -80,7 +91,7 @@ export function usePagingAndSortingForm<T extends StringProperties<T>, K extends
     function resetForm() {
         setFormData(initialFormData);
         setFormValidity(newFormValidity(initial));
-        setQueryData(initialFormData); // initialFormData adds page/sort to initial, must be formData
+        setQueryData(initialFormData); // initialFormData adds page/sort to formData, required
     }
 
     function sortByColumn(column: keyof K) {

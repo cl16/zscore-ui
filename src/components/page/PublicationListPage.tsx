@@ -2,7 +2,11 @@ import {useGetPublicationsByParams} from "../../api/use-api-hook.ts";
 import {usePagingAndSortingForm} from "../../helper/use-form-hook.ts";
 import DataTable from "../table/DataTable.tsx";
 import type {IPublication} from "../../types/interfaces.ts";
-import {extractPatterns, InputValidation} from "../../helper/input-validation-patterns.ts";
+import {
+    extractPatterns,
+    type FormPatternSet,
+    InputValidation
+} from "../../helper/input-validation-patterns.ts";
 import {useEffect} from "react";
 import Select from "../Select.tsx";
 
@@ -11,12 +15,12 @@ interface IPublicationListPageForm {
     minScoreAvg: string,
     maxScoreAvg: string,
     minScoreStd: string,
-    maxScoreStd: string,
+    maxScoreStd: string
 }
 
 function PublicationListPage() {
 
-    const DEFAULT_FORM = {
+    const DEFAULT_FORM : IPublicationListPageForm = {
         nameContains: '',
         minScoreAvg: '',
         maxScoreAvg: '',
@@ -24,7 +28,7 @@ function PublicationListPage() {
         maxScoreStd: ''
     };
 
-    const formPatterns = {
+    const formPatterns : FormPatternSet<IPublicationListPageForm> = {
         nameContains: InputValidation.ANY,
         minScoreAvg: InputValidation.NUMBER_ZERO_TO_ONE_HUNDRED,
         maxScoreAvg: InputValidation.NUMBER_ZERO_TO_ONE_HUNDRED,

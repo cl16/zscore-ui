@@ -1,6 +1,6 @@
 export interface IPagingAndSortingParams {
     page: string | number; // TODO: make just number once everything made consistent
-    size?: string;
+    size?: number;
     sort: string | null;
 }
 
