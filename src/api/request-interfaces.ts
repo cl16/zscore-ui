@@ -17,6 +17,17 @@ export interface IGameParams extends IPagingAndSortingParams {
     titleContains?: string;
 }
 
+export interface IStatReviewParams extends IPagingAndSortingParams {
+    pubId: string | number;
+    gameId: string | number;
+    pubNameContains: string;
+    gameTitleContains: string;
+    minScore: string;
+    maxScore: string;
+    minZscore: string;
+    maxZscore: string;
+}
+
 interface IApiResponsePageable {
     pageNumber: number,
     pageSize: number,

@@ -1,7 +1,7 @@
 import type {UrlParams} from "./request-types.ts";
 import {useEffect, useState} from "react";
 import type {IApiResponseJson} from "./request-interfaces.ts";
-import type {IGame, IPublication} from "../types/interfaces.ts";
+import type {IGame, IPublication, IStatReview} from "../types/interfaces.ts";
 
 // TODO: remove this sleep, used only for testing states set by useApi()
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -66,6 +66,14 @@ export function useGetPublicationsByParams(initialParams: UrlParams) {
 export function useGetGamesByParams(initialParams: UrlParams) {
     const {isLoading, data, error} = useApi<IGame>({
         endpoint: `game`,
+        method: 'GET'
+    }, initialParams);
+    return {data, isLoading, error};
+}
+
+export function useGetStatReviewsByParams(initialParams: UrlParams) {
+    const {isLoading, data, error} = useApi<IStatReview>({
+        endpoint: 'statReview',
         method: 'GET'
     }, initialParams);
     return {data, isLoading, error};
