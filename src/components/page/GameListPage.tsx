@@ -4,6 +4,7 @@ import {usePagingAndSortingForm} from "../../helper/use-form-hook.ts";
 import {useGetGamesByParams} from "../../api/use-api-hook.ts";
 import {extractPatterns, InputValidation} from "../../helper/input-validation-patterns.ts";
 import {useEffect} from "react";
+import Select from "../Select.tsx";
 
 interface IGameListPageForm {
     titleContains: string;
@@ -64,6 +65,16 @@ function GameListPage() {
                         <button type={'button'} onClick={decrementPage}>Prev</button>
                         <button type={'button'} onClick={() => incrementPage(pageData?.totalPages || 1)}>Next</button>
                         <span> {pageData?.totalElements || 0} total results</span>
+                    </div>
+
+                    <Select values={[20, 50, 100]} defaultValue={formData?.size || 20} onChangeFunc={handleFormDataChange}/>
+
+                    <div>
+                        <span>Showing </span>
+                        <span>{((queryData?.page - 1) * queryData?.size) + 1} - {Math.min((queryData?.page * queryData?.size), pageData?.totalElements || 0)}</span>
+                        <span> of </span>
+                        <span>{pageData?.totalElements}</span>
+                        <span> results</span>
                     </div>
                 </form>
 

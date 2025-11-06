@@ -101,6 +101,7 @@ function PublicationListPage() {
                     </div>
 
                     <Select values={[20, 50, 100]} defaultValue={formData?.size || 20} onChangeFunc={handleFormDataChange}/>
+
                     <div>
                         <span>Showing </span>
                         <span>{((queryData?.page - 1) * queryData?.size) + 1} - {Math.min((queryData?.page * queryData?.size), pageData?.totalElements || 0)}</span>
@@ -108,7 +109,6 @@ function PublicationListPage() {
                         <span>{pageData?.totalElements}</span>
                         <span> results</span>
                     </div>
-
                 </form>
 
                 <div className={'table-container page-tl-container'}>
