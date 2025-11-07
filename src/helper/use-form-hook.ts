@@ -30,7 +30,7 @@ function newFormValidity<T extends StringProperties<T>>(initial: T) {
  * @param initial
  * @param patterns
  */
-export function usePagingAndSortingForm<T extends StringProperties<T>, K extends Entity>(initial: T, patterns: T) {
+export function usePagingAndSortingForm<T extends StringProperties<T>, K extends Entity>(initial: T, patterns: Partial<T>) {
     const initialFormData: IPagingAndSortingForm & StringProperties<T> = {
         ...initial,
         page: DEFAULT_PAGE_NUMBER,

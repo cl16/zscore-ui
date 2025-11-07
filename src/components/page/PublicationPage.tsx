@@ -3,6 +3,7 @@ import type {IStatReviewParams} from "../../api/request-interfaces.ts";
 import {usePagingAndSortingForm} from "../../helper/use-form-hook.ts";
 import type {IPublication, IStatReview} from "../../types/interfaces.ts";
 import {extractPatterns, type FormPatternSet, InputValidation} from "../../helper/input-validation-patterns.ts";
+import {useGetStatReviewsByParams} from "../../api/use-api-hook.ts";
 
 type PublicationUrlParams = {
     pubId: string;
@@ -11,13 +12,13 @@ type PublicationUrlParams = {
 
 interface IPublicationPageForm {
     pubId: string,
-    gameId: '',
-    pubNameContains: '',
-    gameTitleContains: '',
-    minScore: '',
-    maxScore: '',
-    minZscore: '',
-    maxZscore: ''
+    gameId: string,
+    pubNameContains: string,
+    gameTitleContains: string,
+    minScore: string,
+    maxScore: string,
+    minZscore: string,
+    maxZscore: string
 }
 
 function PublicationPage() {
@@ -33,17 +34,15 @@ function PublicationPage() {
         maxZscore: InputValidation.NUMBER
     };
 
-    if (pubId) {
-        DEFAULT_FORM = {
-            pubId: pubId,
-            gameId: '',
-            pubNameContains: '',
-            gameTitleContains: '',
-            minScore: '',
-            maxScore: '',
-            minZscore: '',
-            maxZscore: ''
-        }
+    DEFAULT_FORM = {
+        pubId: pubId || '',
+        gameId: '',
+        pubNameContains: '',
+        gameTitleContains: '',
+        minScore: '',
+        maxScore: '',
+        minZscore: '',
+        maxZscore: ''
     }
 
     const {
@@ -62,10 +61,21 @@ function PublicationPage() {
         extractPatterns(formPatterns)
     );
 
-
+    const {data: pageData, isLoading, error: isError} = useGetStatReviewsByParams(queryData);
 
     return (
-        <div className={'page-body-main'}>This is the PublicationPage component with pubId: {pubId}</div>
+        <>
+            <div className={'page-body-main'}>This is the PublicationPage component with pubId: {pubId}</div>
+            <div>
+                {pageData?.content.map((col, i) => {
+                    return (
+                        <div>{col.game.title}</div>
+                    )
+                })}
+            </div>
+        </>
+
+
     )
 }
 
