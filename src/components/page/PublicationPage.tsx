@@ -4,6 +4,7 @@ import {usePagingAndSortingForm} from "../../helper/use-form-hook.ts";
 import type {IPublication, IStatReview} from "../../types/interfaces.ts";
 import {extractPatterns, type FormPatternSet, InputValidation} from "../../helper/input-validation-patterns.ts";
 import {useGetStatReviewsByParams} from "../../api/use-api-hook.ts";
+import DataTable from "../table/DataTable.tsx";
 
 type PublicationUrlParams = {
     pubId: string;
@@ -25,7 +26,6 @@ function PublicationPage() {
 
     const { pubId } = useParams<PublicationUrlParams>();
 
-    let DEFAULT_FORM : IPublicationPageForm;
     const formPatterns : FormPatternSet<Omit<IPublicationPageForm, 'pubId' | 'gameId' | 'pubNameContains'>> = {
         gameTitleContains: InputValidation.ANY,
         minScore: InputValidation.NUMBER_ZERO_TO_ONE_HUNDRED,
@@ -34,8 +34,8 @@ function PublicationPage() {
         maxZscore: InputValidation.NUMBER
     };
 
-    DEFAULT_FORM = {
-        pubId: pubId || '',
+    const DEFAULT_FORM : IPublicationPageForm = {
+        pubId: pubId || '',  // TODO: handle pubId being undefined differently?
         gameId: '',
         pubNameContains: '',
         gameTitleContains: '',
@@ -65,13 +65,13 @@ function PublicationPage() {
 
     return (
         <>
-            <div className={'page-body-main'}>This is the PublicationPage component with pubId: {pubId}</div>
-            <div>
-                {pageData?.content.map((col, i) => {
-                    return (
-                        <div>{col.game.title}</div>
-                    )
-                })}
+            <div className={'table-container page-tl-container'}>
+                {
+                    isLoading ? <div>Loading ...</div> :
+                        isError ? <div>An error occurred! Please try again or try another query.</div> :
+                            pageData === null || pageData.content.length === 0 ? <div>Nothing to see here ...</div> :
+                                '' // data table belongs here
+                }
             </div>
         </>
 
