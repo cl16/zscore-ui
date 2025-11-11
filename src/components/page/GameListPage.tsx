@@ -86,7 +86,7 @@ function GameListPage() {
 
                                     <DataTable<IGame> content={pageData.content} config={{
                                         columns: [
-                                            {key: 'title', external: 'Title'}
+                                            {accessor: 'title', label: 'Title'}
                                         ],
                                         idString: 'gameId',
                                         sortConfig: {
