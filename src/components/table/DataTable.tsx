@@ -57,7 +57,8 @@ function DataTable<T>(
                         <tr key={String(row[config.idString])} className={'data-table-row'}>
                             {config.columns.map((col, i) => {
 
-                                const val = access_nested(row as NestedEntity, col.accessor)
+                                const [key, ...rest] = col.accessor.split('_')
+                                const val = access_nested(row as NestedEntity, key, ...rest);
 
                                 return (
                                     <td key={`${row[config.idString]}-${i}`} className={cellClasses[i]}>{

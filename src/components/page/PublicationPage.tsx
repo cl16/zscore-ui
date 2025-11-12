@@ -70,7 +70,21 @@ function PublicationPage() {
                     isLoading ? <div>Loading ...</div> :
                         isError ? <div>An error occurred! Please try again or try another query.</div> :
                             pageData === null || pageData.content.length === 0 ? <div>Nothing to see here ...</div> :
-                                '' // data table belongs here
+
+                                <DataTable content={pageData.content} config={{
+                                    columns: [
+                                        {accessor: 'game_title', label: 'Title'},
+                                        {accessor: 'date', label: 'Date'},
+                                        {accessor: 'score', label: 'Score'},
+                                        {accessor: 'zscore', label: 'Z-Score'}
+                                    ],
+                                    idString: 'id',
+                                    sortConfig: {
+                                        sortCol: formData.sort ? formData.sort.split(',')[0] : null,
+                                        sortDir: formData.sort ? formData.sort.split(',')[1] as 'asc' | 'desc' : null,
+                                        toggleSortCol: sortByColumn
+                                    }
+                                }}/>
                 }
             </div>
         </>
