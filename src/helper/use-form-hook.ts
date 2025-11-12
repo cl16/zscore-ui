@@ -94,7 +94,7 @@ export function usePagingAndSortingForm<T extends StringProperties<T>, K extends
         setQueryData(initialFormData); // initialFormData adds page/sort to formData, required
     }
 
-    function sortByColumn(column: keyof K) {
+    function sortByColumn(column: string) {
         const [sortCol, sortDir] = formData.sort ? formData.sort.split(',') : [null, null];
         if (sortCol != column) {
             const newFormData = {...formData, sort: `${column as string},asc`, page: 1}

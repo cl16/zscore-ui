@@ -52,16 +52,16 @@ function DataTable<T>(
                 </tr>
             </thead>
             <tbody className={'data-table-body tbody-scrollable'}>
-                {content.map((row) => {
+                {content.map((row, i) => {
                     return (
-                        <tr key={String(row[config.idString])} className={'data-table-row'}>
+                        <tr key={i} className={'data-table-row'}>
                             {config.columns.map((col, i) => {
 
                                 const [key, ...rest] = col.accessor.split('_')
                                 const val = access_nested(row as NestedEntity, key, ...rest);
 
                                 return (
-                                    <td key={`${row[config.idString]}-${i}`} className={cellClasses[i]}>{
+                                    <td key={`${col.accessor}-${i}`} className={cellClasses[i]}>{
                                         typeof val === 'string' || typeof val === 'number' ? val : null
                                     }</td>
                                 )

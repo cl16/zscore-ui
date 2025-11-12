@@ -22,8 +22,8 @@ export interface IStatReview {
     'zscore': number
 }
 
-export interface ITableSortConfig<T> {
-    sortCol: keyof T | null;
+export interface ITableSortConfig {
+    sortCol: string | null;
     sortDir: 'asc' | 'desc' | null;
     toggleSortCol: (col: string) => void;
 }
@@ -31,7 +31,7 @@ export interface ITableSortConfig<T> {
 export interface IDataTableConfig<T> {
     columns: ITableColumn[];
     idString: keyof T;
-    sortConfig: ITableSortConfig<T>;
+    sortConfig: ITableSortConfig;
 }
 
 export interface ITableColumn {
