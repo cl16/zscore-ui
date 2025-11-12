@@ -25,16 +25,16 @@ export interface IStatReview {
 export interface ITableSortConfig<T> {
     sortCol: keyof T | null;
     sortDir: 'asc' | 'desc' | null;
-    toggleSortCol: (col: keyof T) => void;
+    toggleSortCol: (col: string) => void;
 }
 
 export interface IDataTableConfig<T> {
-    columns: ITableColumn<T>[];
+    columns: ITableColumn[];
     idString: keyof T;
     sortConfig: ITableSortConfig<T>;
 }
 
-export interface ITableColumn<T> {
-    key: keyof T;
-    external: string;
+export interface ITableColumn {
+    accessor: string;
+    label: string;
 }

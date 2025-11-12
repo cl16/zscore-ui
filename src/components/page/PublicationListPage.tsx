@@ -119,9 +119,9 @@ function PublicationListPage() {
 
                                         <DataTable<IPublication> content={pageData.content} config={{
                                             columns: [
-                                                {key: 'name', external: 'Name'},
-                                                {key: 'scoreAvg', external: 'Score Average'},
-                                                {key: 'scoreStd', external: 'Score Standard Deviation'}
+                                                {accessor: 'name', label: 'Name'},
+                                                {accessor: 'scoreAvg', label: 'Score Average'},
+                                                {accessor: 'scoreStd', label: 'Score Standard Deviation'}
                                             ],
                                             idString: 'pubId',
                                             sortConfig: {
