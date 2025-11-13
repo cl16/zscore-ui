@@ -6,6 +6,7 @@ import {useGetStatReviewsByParams} from "../../api/use-api-hook.ts";
 import DataTableContainer from "../table/DataTableContainer.tsx";
 import {useEffect} from "react";
 import Select from "../Select.tsx";
+import DataTable from "../table/DataTable.tsx";
 
 type PublicationUrlParams = {
     pubId: string;
@@ -72,8 +73,29 @@ function PublicationPage() {
         <>
             <div className={'page-body-main'}>
                 <div className={'publication-detail-section'}>
-                    <div>{pageData?.content[0].publication.name || 'No pub name found'}</div>
-                    <div>{pageData?.totalElements} total review scores published</div>
+                    {
+                        isLoading ? <div>Loading ...</div> :
+                            isError ? <div>An error occurred!</div> :
+                                pageData === null || pageData.content.length === 0 ? <div>No results to display ...</div> :
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Publication</th>
+                                                <th>Scores Published</th>
+                                                <th>Score Avg</th>
+                                                <th>Score Std Dev</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>{pageData.content[0].publication.name}</td>
+                                                <td>{pageData.totalElements}</td>
+                                                <td>{pageData.content[0].publication.scoreAvg}</td>
+                                                <td>{pageData.content[0].publication.scoreStd}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                    }
                 </div>
                 <form onSubmit={submitForm}>
                     <div>
