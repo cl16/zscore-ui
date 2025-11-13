@@ -5,6 +5,7 @@ import type {IPublication, IStatReview} from "../../types/interfaces.ts";
 import {extractPatterns, type FormPatternSet, InputValidation} from "../../helper/input-validation-patterns.ts";
 import {useGetStatReviewsByParams} from "../../api/use-api-hook.ts";
 import DataTable from "../table/DataTable.tsx";
+import DataTableContainer from "../table/DataTableContainer.tsx";
 
 type PublicationUrlParams = {
     pubId: string;
@@ -66,29 +67,21 @@ function PublicationPage() {
     return (
         <>
             <div className={'table-container page-tl-container'}>
-                {
-                    isLoading ? <div>Loading ...</div> :
-                        isError ? <div>An error occurred! Please try again or try another query.</div> :
-                            pageData === null || pageData.content.length === 0 ? <div>Nothing to see here ...</div> :
-
-                                <DataTable content={pageData.content} config={{
-                                    columns: [
-                                        {accessor: 'game_title', label: 'Title'},
-                                        {accessor: 'date', label: 'Date'},
-                                        {accessor: 'score', label: 'Score'},
-                                        {accessor: 'zscore', label: 'Z-Score'}
-                                    ],
-                                    idString: 'id',
-                                    sortConfig: {
-                                        sortCol: formData.sort ? formData.sort.split(',')[0] : null,
-                                        sortDir: formData.sort ? formData.sort.split(',')[1] as 'asc' | 'desc' : null,
-                                        toggleSortCol: sortByColumn
-                                    }
-                                }}/>
-                }
+                <DataTableContainer isLoading={isLoading} isError={isError} pageData={pageData} dataTableConfig={{
+                    columns: [
+                        {accessor: 'game_title', label: 'Title'},
+                        {accessor: 'date', label: 'Date'},
+                        {accessor: 'score', label: 'Score'},
+                        {accessor: 'zscore', label: 'Z-Score'}
+                    ],
+                    idString: 'id',
+                    sortConfig: {
+                        sort: formData.sort,
+                        toggleSortCol: sortByColumn
+                    }
+                }}/>
             </div>
         </>
-
 
     )
 }

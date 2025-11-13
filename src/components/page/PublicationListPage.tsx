@@ -9,6 +9,7 @@ import {
 } from "../../helper/input-validation-patterns.ts";
 import {useEffect} from "react";
 import Select from "../Select.tsx";
+import DataTableContainer from "../table/DataTableContainer.tsx";
 
 interface IPublicationListPageForm {
     nameContains: string,
@@ -112,25 +113,18 @@ function PublicationListPage() {
                 </form>
 
                 <div className={'table-container page-tl-container'}>
-                    {
-                        isLoading ? <div>Loading ...</div> :
-                            isError ? <div>An error occurred! Please try again or try another query.</div> :
-                                pageData === null || pageData.content.length === 0 ? <div>Nothing to see here ...</div> :
-
-                                        <DataTable<IPublication> content={pageData.content} config={{
-                                            columns: [
-                                                {accessor: 'name', label: 'Name'},
-                                                {accessor: 'scoreAvg', label: 'Score Average'},
-                                                {accessor: 'scoreStd', label: 'Score Standard Deviation'}
-                                            ],
-                                            idString: 'pubId',
-                                            sortConfig: {
-                                                sortCol: formData.sort ? formData.sort.split(',')[0] as keyof IPublication : null,
-                                                sortDir: formData.sort ? formData.sort.split(',')[1] as 'asc' | 'desc' : null,
-                                                toggleSortCol: sortByColumn
-                                            }
-                                        }}/>
-                    }
+                    <DataTableContainer<IPublication> isLoading={isLoading} isError={isError} pageData={pageData} dataTableConfig={{
+                        columns: [
+                            {accessor: 'name', label: 'Name'},
+                            {accessor: 'scoreAvg', label: 'Score Average'},
+                            {accessor: 'scoreStd', label: 'Score Standard Deviation'}
+                        ],
+                        idString: 'pubId',
+                        sortConfig: {
+                            sort: formData.sort,
+                            toggleSortCol: sortByColumn
+                        }
+                    }}/>
                 </div>
 
             </div>

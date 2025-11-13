@@ -1,3 +1,5 @@
+import type {IApiResponseJson} from "../api/request-interfaces.ts";
+
 export interface IPublication {
     'pubId': number,
     'name': string,
@@ -22,16 +24,22 @@ export interface IStatReview {
     'zscore': number
 }
 
-export interface ITableSortConfig {
-    sortCol: string | null;
-    sortDir: 'asc' | 'desc' | null;
-    toggleSortCol: (col: string) => void;
+export interface IDataTableContainerConfig<T> {
+    isLoading: boolean;
+    isError: boolean;
+    pageData: IApiResponseJson<T> | null;
+    dataTableConfig: IDataTableConfig<T>;
 }
 
 export interface IDataTableConfig<T> {
     columns: ITableColumn[];
     idString: keyof T;
     sortConfig: ITableSortConfig;
+}
+
+export interface ITableSortConfig {
+    sort: string | null;
+    toggleSortCol: (col: string) => void;
 }
 
 export interface ITableColumn {

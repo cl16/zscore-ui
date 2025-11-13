@@ -26,9 +26,12 @@ function DataTable<T>(
     const columnLabels: string[] = [];
     const headerClasses: string[] = [];
     const cellClasses: string[] = [];
+
+    const sortCol = config.sortConfig.sort?.split(',')[0] || null;
+    const sortDir = config.sortConfig.sort?.split(',')[1] || null;
     config.columns.map((col, i) => {
-        if (config.sortConfig.sortCol === String(col.accessor)) {
-            columnLabels.push(`${config.columns[i].label} ${config.sortConfig.sortDir === 'asc' ? ' ↑' : ' ↓'}`);
+        if (sortCol === String(col.accessor)) {
+            columnLabels.push(`${config.columns[i].label} ${sortDir === 'asc' ? ' ↑' : ' ↓'}`);
             headerClasses.push(headerClassSorted);
             cellClasses.push(cellClassSorted);
         } else {
@@ -63,7 +66,8 @@ function DataTable<T>(
                                 return (
                                     <td key={`${col.accessor}-${i}`} className={cellClasses[i]}>{
                                         typeof val === 'string' || typeof val === 'number' ? val : null
-                                    }</td>
+                                    }
+                                    </td>
                                 )
                             })}
                         </tr>
