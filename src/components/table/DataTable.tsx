@@ -61,14 +61,10 @@ function DataTable<T>(
                             {config.columns.map((col, i) => {
 
                                 const [key, ...rest] = col.accessor.split('_')
-                                const val = access_nested(row as NestedEntity, key, ...rest);
+                                let val = String(access_nested(row as NestedEntity, key, ...rest));
+                                val = col.modifier ? col.modifier(val) : val;
 
-                                return (
-                                    <td key={`${col.accessor}-${i}`} className={cellClasses[i]}>{
-                                        typeof val === 'string' || typeof val === 'number' ? val : null
-                                    }
-                                    </td>
-                                )
+                                return (<td key={`${col.accessor}-${i}`} className={cellClasses[i]}>{val}</td>)
                             })}
                         </tr>
                     )

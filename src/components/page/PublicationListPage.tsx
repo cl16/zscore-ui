@@ -1,6 +1,5 @@
 import {useGetPublicationsByParams} from "../../api/use-api-hook.ts";
 import {usePagingAndSortingForm} from "../../helper/use-form-hook.ts";
-import DataTable from "../table/DataTable.tsx";
 import type {IPublication} from "../../types/interfaces.ts";
 import {
     extractPatterns,

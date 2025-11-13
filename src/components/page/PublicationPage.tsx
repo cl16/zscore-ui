@@ -1,11 +1,11 @@
 import {useParams} from "react-router-dom";
-import type {IStatReviewParams} from "../../api/request-interfaces.ts";
 import {usePagingAndSortingForm} from "../../helper/use-form-hook.ts";
-import type {IPublication, IStatReview} from "../../types/interfaces.ts";
+import type {IStatReview} from "../../types/interfaces.ts";
 import {extractPatterns, type FormPatternSet, InputValidation} from "../../helper/input-validation-patterns.ts";
 import {useGetStatReviewsByParams} from "../../api/use-api-hook.ts";
-import DataTable from "../table/DataTable.tsx";
 import DataTableContainer from "../table/DataTableContainer.tsx";
+import {useEffect} from "react";
+import Select from "../Select.tsx";
 
 type PublicationUrlParams = {
     pubId: string;
@@ -64,22 +64,82 @@ function PublicationPage() {
 
     const {data: pageData, isLoading, error: isError} = useGetStatReviewsByParams(queryData);
 
+    useEffect(() => {
+        setMaxPage(pageData?.totalPages || 1);
+    }, [pageData?.totalPages, setMaxPage])
+
     return (
         <>
-            <div className={'table-container page-tl-container'}>
-                <DataTableContainer isLoading={isLoading} isError={isError} pageData={pageData} dataTableConfig={{
-                    columns: [
-                        {accessor: 'game_title', label: 'Title'},
-                        {accessor: 'date', label: 'Date'},
-                        {accessor: 'score', label: 'Score'},
-                        {accessor: 'zscore', label: 'Z-Score'}
-                    ],
-                    idString: 'id',
-                    sortConfig: {
-                        sort: formData.sort,
-                        toggleSortCol: sortByColumn
-                    }
-                }}/>
+            <div className={'page-body-main'}>
+                <div className={'publication-detail-section'}>
+                    <div>{pageData?.content[0].publication.name || 'No pub name found'}</div>
+                    <div>{pageData?.totalElements} total review scores published</div>
+                </div>
+                <form onSubmit={submitForm}>
+                    <div>
+                        <div>
+                            <label>Game Title Contains</label>
+                            <input name={'gameTitleContains'} className={formValidity.gameTitleContains ? 'text-input' : 'text-input-invalid'} type={'textbox'} value={formData.gameTitleContains} onChange={handleFormDataChange}/>
+                            {formValidity.gameTitleContains ? null : <span>formPatterns.gameTitleContains</span>}
+                        </div>
+                        <div>
+                            <label>Min Score</label>
+                            <input name={'minScore'} className={formValidity.minScore ? 'text-input' : 'text-input-invalid'} type={'textbox'} value={formData.minScore} onChange={handleFormDataChange}/>
+                            {formValidity.minScore ? null : <span>formPatterns.minScore</span>}
+                        </div>
+                        <div>
+                            <label>Max Score</label>
+                            <input name={'maxScore'} className={formValidity.maxScore ? 'text-input' : 'text-input-invalid'} type={'textbox'} value={formData.maxScore} onChange={handleFormDataChange}/>
+                            {formValidity.maxScore ? null : <span>formPatterns.maxScore</span>}
+                        </div>
+                        <div>
+                            <label>Min Z-Score</label>
+                            <input name={'minZscore'} className={formValidity.minZscore ? 'text-input' : 'text-input-invalid'} type={'textbox'} value={formData.minZscore} onChange={handleFormDataChange}/>
+                            {formValidity.minZscore ? null : <span>formPatterns.minZscore</span>}
+                        </div>
+                        <div>
+                            <label>Max Z-Score</label>
+                            <input name={'maxZscore'} className={formValidity.maxZscore ? 'text-input' : 'text-input-invalid'} type={'textbox'} value={formData.maxZscore} onChange={handleFormDataChange}/>
+                            {formValidity.maxZscore ? null : <span>formPatterns.maxZscore</span>}
+                        </div>
+                    </div>
+                    <button type={'submit'} disabled={Object.values(formValidity).some((valid) => !valid)}>Submit</button>
+                    <button type={'button'} onClick={resetForm}>Reset</button>
+                    <div>
+                        <span>Page </span>
+                        <input name={'page'} className={formValidity.page ? 'text-input' : 'text-input-invalid'} type={'textbox'} value={formData.page} onChange={handleFormDataChange}/>
+                        <span> of {pageData?.totalPages || 1}</span>
+                        <button type={'button'} onClick={decrementPage}>Prev</button>
+                        <button type={'button'} onClick={() => incrementPage(pageData?.totalPages || 1)}>Next</button>
+                        <span> {pageData?.totalElements || 0} total results</span>
+                    </div>
+
+                    <Select values={[20, 50, 100]} defaultValue={formData?.size || 20} onChangeFunc={handleFormDataChange}/>
+
+                    <div>
+                        <span>Showing </span>
+                        <span>{((queryData?.page - 1) * queryData?.size) + 1} - {Math.min((queryData?.page * queryData?.size), pageData?.totalElements || 0)}</span>
+                        <span> of </span>
+                        <span>{pageData?.totalElements}</span>
+                        <span> results</span>
+                    </div>
+                </form>
+
+                <div className={'table-container page-tl-container'}>
+                    <DataTableContainer isLoading={isLoading} isError={isError} pageData={pageData} dataTableConfig={{
+                        columns: [
+                            {accessor: 'game_title', label: 'Title'},
+                            {accessor: 'date', label: 'Date', modifier: (val: string) => val.split('T')[0]},
+                            {accessor: 'score', label: 'Score'},
+                            {accessor: 'zscore', label: 'Z-Score'}
+                        ],
+                        idString: 'id',
+                        sortConfig: {
+                            sort: formData.sort,
+                            toggleSortCol: sortByColumn
+                        }
+                    }}/>
+                </div>
             </div>
         </>
 

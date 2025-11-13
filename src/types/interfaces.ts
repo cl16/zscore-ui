@@ -45,4 +45,5 @@ export interface ITableSortConfig {
 export interface ITableColumn {
     accessor: string;
     label: string;
+    modifier?: (arg: string) => string;
 }
