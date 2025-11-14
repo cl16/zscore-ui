@@ -1,4 +1,4 @@
-import type {IApiResponseJson} from "../api/request-interfaces.ts";
+import type {IApiResponsePagingAndSorting} from "../api/request-interfaces.ts";
 
 export interface IPublication {
     'pubId': number,
@@ -27,7 +27,7 @@ export interface IStatReview {
 export interface IDataTableContainerConfig<T> {
     isLoading: boolean;
     isError: boolean;
-    pageData: IApiResponseJson<T> | null;
+    pageData: IApiResponsePagingAndSorting<T> | null;
     dataTableConfig: IDataTableConfig<T>;
 }
 

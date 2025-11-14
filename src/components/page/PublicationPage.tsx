@@ -2,11 +2,10 @@ import {useParams} from "react-router-dom";
 import {usePagingAndSortingForm} from "../../helper/use-form-hook.ts";
 import type {IStatReview} from "../../types/interfaces.ts";
 import {extractPatterns, type FormPatternSet, InputValidation} from "../../helper/input-validation-patterns.ts";
-import {useGetStatReviewsByParams} from "../../api/use-api-hook.ts";
+import {useGetPublicationById, useGetStatReviewsByParams} from "../../api/use-api-hook.ts";
 import DataTableContainer from "../table/DataTableContainer.tsx";
 import {useEffect} from "react";
 import Select from "../Select.tsx";
-import DataTable from "../table/DataTable.tsx";
 
 type PublicationUrlParams = {
     pubId: string;
@@ -26,7 +25,11 @@ interface IPublicationPageForm {
 
 function PublicationPage() {
 
-    const { pubId } = useParams<PublicationUrlParams>();
+    let { pubId } = useParams<PublicationUrlParams>();
+
+    pubId = pubId ? pubId : '';
+
+    const {data: publicationDetails, isLoading: publicationDetailsIsLoading, error: publicationDetailsIsError} = useGetPublicationById(pubId); // TODO: How should an undefined pubID be handled here and on this page overall?
 
     const formPatterns : FormPatternSet<Omit<IPublicationPageForm, 'pubId' | 'gameId' | 'pubNameContains'>> = {
         gameTitleContains: InputValidation.ANY,
@@ -37,7 +40,7 @@ function PublicationPage() {
     };
 
     const DEFAULT_FORM : IPublicationPageForm = {
-        pubId: pubId || '',  // TODO: handle pubId being undefined differently?
+        pubId: pubId,
         gameId: '',
         pubNameContains: '',
         gameTitleContains: '',
@@ -74,24 +77,22 @@ function PublicationPage() {
             <div className={'page-body-main'}>
                 <div className={'publication-detail-section'}>
                     {
-                        isLoading ? <div>Loading ...</div> :
-                            isError ? <div>An error occurred!</div> :
-                                pageData === null || pageData.content.length === 0 ? <div>No results to display ...</div> :
+                        publicationDetailsIsLoading ? <div>Loading ...</div> :
+                            publicationDetailsIsError ? <div>An error occurred!</div> :
+                                publicationDetails === null ? <div>No results to display ...</div> :
                                     <table>
                                         <thead>
                                             <tr>
                                                 <th>Publication</th>
-                                                <th>Scores Published</th>
                                                 <th>Score Avg</th>
                                                 <th>Score Std Dev</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td>{pageData.content[0].publication.name}</td>
-                                                <td>{pageData.totalElements}</td>
-                                                <td>{pageData.content[0].publication.scoreAvg}</td>
-                                                <td>{pageData.content[0].publication.scoreStd}</td>
+                                                <td>{publicationDetails.name}</td>
+                                                <td>{publicationDetails.scoreAvg}</td>
+                                                <td>{publicationDetails.scoreStd}</td>
                                             </tr>
                                         </tbody>
                                     </table>

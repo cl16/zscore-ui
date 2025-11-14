@@ -1,6 +1,6 @@
 import type {UrlParams} from "./request-types.ts";
 import {useEffect, useState} from "react";
-import type {IApiResponseJson} from "./request-interfaces.ts";
+import type {IApiResponsePagingAndSorting} from "./request-interfaces.ts";
 import type {IGame, IPublication, IStatReview} from "../types/interfaces.ts";
 
 // TODO: remove this sleep, used only for testing states set by useApi()
@@ -23,9 +23,9 @@ export function buildUrlQuery(params: UrlParams) {
         .join('&')
 }
 
-function useApi<T>({endpoint, method}: UseApiProps, params: UrlParams) {
+function useApi<T>({endpoint, method}: UseApiProps, params?: UrlParams) {
     const [isLoading, setIsLoading] = useState(false);
-    const [data, setData] = useState<IApiResponseJson<T> | null>(null);
+    const [data, setData] = useState<T | null>(null);
     const [error, setError] = useState(false);
 
     useEffect(() => {
@@ -56,25 +56,33 @@ function useApi<T>({endpoint, method}: UseApiProps, params: UrlParams) {
 }
 
 export function useGetPublicationsByParams(initialParams: UrlParams) {
-    const {data, isLoading, error} = useApi<IPublication>({
+    const {data, isLoading, error} = useApi<IApiResponsePagingAndSorting<IPublication>>({
         endpoint: `publication`,
         method: 'GET'
     }, initialParams);
     return {data, isLoading, error};
 }
 
-export function useGetGamesByParams(initialParams: UrlParams) {
-    const {isLoading, data, error} = useApi<IGame>({
-        endpoint: `game`,
+export function useGetPublicationById(id: string) {
+    const {data, isLoading, error} = useApi<IPublication>({
+        endpoint: `publication/${id}`,
         method: 'GET'
-    }, initialParams);
+    });
     return {data, isLoading, error};
 }
 
-export function useGetStatReviewsByParams(initialParams: UrlParams) {
-    const {isLoading, data, error} = useApi<IStatReview>({
+export function useGetGamesByParams(params: UrlParams) {
+    const {isLoading, data, error} = useApi<IApiResponsePagingAndSorting<IGame>>({
+        endpoint: `game`,
+        method: 'GET'
+    }, params);
+    return {data, isLoading, error};
+}
+
+export function useGetStatReviewsByParams(params: UrlParams) {
+    const {isLoading, data, error} = useApi<IApiResponsePagingAndSorting<IStatReview>>({
         endpoint: 'statReview',
         method: 'GET'
-    }, initialParams);
+    }, params);
     return {data, isLoading, error};
 }

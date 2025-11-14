@@ -41,7 +41,7 @@ interface IApiResponsePageable {
     unpaged: false
 }
 
-export interface IApiResponseJson<T> {
+export interface IApiResponsePagingAndSorting<T> {
     content: T[];
     pageable: IApiResponsePageable,
     last: boolean,
