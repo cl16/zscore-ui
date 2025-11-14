@@ -9,7 +9,7 @@ export interface IPublicationParams extends IPagingAndSortingParams {
     maxScoreStd: string;
     minScoreAvg: string;
     maxScoreAvg: string;
-    name?: string;  // TODO: determine if really ever used - probably not, remove?
+    name?: string; // TODO: determine if really ever used - probably not, remove?
     nameContains: string;
 }
 
@@ -29,32 +29,32 @@ export interface IStatReviewParams extends IPagingAndSortingParams {
 }
 
 interface IApiResponsePageable {
-    pageNumber: number,
-    pageSize: number,
+    pageNumber: number;
+    pageSize: number;
     sort: {
-        empty: boolean,
-        sorted: boolean,
-        unsorted: boolean
-    },
-    offset: number,
-    paged: true,
-    unpaged: false
+        empty: boolean;
+        sorted: boolean;
+        unsorted: boolean;
+    };
+    offset: number;
+    paged: true;
+    unpaged: false;
 }
 
 export interface IApiResponsePagingAndSorting<T> {
     content: T[];
-    pageable: IApiResponsePageable,
-    last: boolean,
-    totalPages: number,
-    totalElements: number,
-    size: number,
-    number: number,
+    pageable: IApiResponsePageable;
+    last: boolean;
+    totalPages: number;
+    totalElements: number;
+    size: number;
+    number: number;
     sort: {
-        empty: boolean,
-        sorted: boolean,
-        unsorted: boolean
-    },
-    first: boolean,
-    numberOfElements: number,
-    empty: boolean
+        empty: boolean;
+        sorted: boolean;
+        unsorted: boolean;
+    };
+    first: boolean;
+    numberOfElements: number;
+    empty: boolean;
 }

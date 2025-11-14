@@ -1,27 +1,27 @@
-import type {IApiResponsePagingAndSorting} from "../api/request-interfaces.ts";
+import type { IApiResponsePagingAndSorting } from '../api/request-interfaces.ts';
 
 export interface IPublication {
-    'pubId': number,
-    'name': string,
-    'scoreAvg': number,
-    'scoreStd': number,
+    pubId: number;
+    name: string;
+    scoreAvg: number;
+    scoreStd: number;
 }
 
 export interface IGame {
-    'gameId': number,
-    'title': string
+    gameId: number;
+    title: string;
 }
 
 export interface IStatReview {
-    'id': {
-        'gameId': number,
-        'pubId': number
-    },
-    'game': IGame,
-    'publication': IPublication,
-    'date': string,
-    'score': number,
-    'zscore': number
+    id: {
+        gameId: number;
+        pubId: number;
+    };
+    game: IGame;
+    publication: IPublication;
+    date: string;
+    score: number;
+    zscore: number;
 }
 
 export interface IDataTableContainerConfig<T> {
@@ -46,4 +46,5 @@ export interface ITableColumn {
     accessor: string;
     label: string;
     modifier?: (arg: string) => string;
+    link?: (obj: any) => string;
 }

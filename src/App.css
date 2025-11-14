@@ -175,3 +175,11 @@ th {
 .data-table-col-sorted {
     background-color: #493f4f;
 }
+
+.data-table-cell-link {
+    color: inherit;
+}
+
+.data-table-cell-link:hover {
+    font-weight: bold;
+}

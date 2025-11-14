@@ -1,5 +1,6 @@
-import type {IDataTableConfig} from "../../types/interfaces.ts";
-import type {NestedEntity} from "../../types/types.ts";
+import type { IDataTableConfig } from '../../types/interfaces.ts';
+import type { NestedEntity } from '../../types/types.ts';
+import { Link } from 'react-router-dom';
 
 function access_nested(obj: NestedEntity, key: string, ...rest: string[]) {
     if (rest.length === 0) {
@@ -12,12 +13,7 @@ function access_nested(obj: NestedEntity, key: string, ...rest: string[]) {
     }
 }
 
-function DataTable<T>(
-    {content, config} : {
-        content: T[],
-        config: IDataTableConfig<T>
-    }) {
-
+function DataTable<T>({ content, config }: { content: T[]; config: IDataTableConfig<T> }) {
     const headerClassStandard = 'data-table-header data-table-cell';
     const headerClassSorted = 'data-table-header-sorted data-table-header data-table-cell';
     const cellClassStandard = 'data-table-data data-table-cell';
@@ -48,9 +44,14 @@ function DataTable<T>(
                     {config.columns.map((col, i) => {
                         return (
                             <th key={String(col.accessor)} className={headerClasses[i]}>
-                                <button className={'data-table-col-sort-button'} onClick={() => config.sortConfig.toggleSortCol(col.accessor)}>{columnLabels[i]}</button>
+                                <button
+                                    className={'data-table-col-sort-button'}
+                                    onClick={() => config.sortConfig.toggleSortCol(col.accessor)}
+                                >
+                                    {columnLabels[i]}
+                                </button>
                             </th>
-                        )
+                        );
                     })}
                 </tr>
             </thead>
@@ -59,19 +60,31 @@ function DataTable<T>(
                     return (
                         <tr key={i} className={'data-table-row'}>
                             {config.columns.map((col, i) => {
-
-                                const [key, ...rest] = col.accessor.split('_')
+                                const [key, ...rest] = col.accessor.split('_');
                                 let val = String(access_nested(row as NestedEntity, key, ...rest));
                                 val = col.modifier ? col.modifier(val) : val;
 
-                                return (<td key={`${col.accessor}-${i}`} className={cellClasses[i]}>{val}</td>)
+                                return (
+                                    <td className={cellClasses[i]} key={`${col.accessor}-${i}`}>
+                                        {col.link ? (
+                                            <Link
+                                                className={'data-table-cell-link'}
+                                                to={col.link(row)}
+                                            >
+                                                {val}
+                                            </Link>
+                                        ) : (
+                                            val
+                                        )}
+                                    </td>
+                                );
                             })}
                         </tr>
-                    )
+                    );
                 })}
             </tbody>
         </table>
-    )
+    );
 }
 
 export default DataTable;
